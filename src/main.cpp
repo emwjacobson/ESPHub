@@ -1,19 +1,23 @@
 #include <Arduino.h>
+#include <LittleFS.h>
 #include "master.h"
 #include "config.h"
 
 #ifndef MODE
-#define MODE 1
+#define MODE 2
 #endif
 
 Controller* controller;
 
 void setup() {
-  #ifdef SERIAL_ENABLED
   Serial.begin(9600);
-  while (!Serial) {delay(1);}
+  while (!Serial) {ESP.wdtFeed();}
+  delay(250);
   Serial.println("Serial Initialized");
-  #endif
+
+  if (!LittleFS.begin()) {
+    Serial.println("An error has occured mounting LittleFS");
+  }
 
   #if MODE == 1
   controller = new Master();

@@ -7,9 +7,6 @@
 #define HUB_SSID "HUB WIFI"
 #define HUB_PASSWD "SomeFunkyPassword"
 
-// Comment this out to disable Serial
-#define SERIAL_ENABLED
-
 
 
 //////// Master Node Configuration ////////

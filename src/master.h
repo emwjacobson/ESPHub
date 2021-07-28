@@ -11,7 +11,7 @@ public:
   void setup();
   void loop();
 private:
-  // AsyncWebServer server;
+  AsyncWebServer server;
 
   // Creates a soft AP
   void setupSoftAP();

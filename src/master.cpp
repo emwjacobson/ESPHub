@@ -43,10 +43,8 @@ void Master::loop() {
   }
   Serial.println("");
 
-  for (int i = 0; i<10;i++) {
-    ESP.wdtFeed();
-    delay(10);
-  }
+  // yield();
+  delay(1000);
 }
 
 void Master::setupSoftAP() {

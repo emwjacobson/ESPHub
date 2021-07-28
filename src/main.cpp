@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 #include "master.h"
+#include "follower.h"
 #include "config.h"
 
 #ifndef MODE
@@ -12,7 +13,7 @@ Controller* controller;
 void setup() {
   Serial.begin(9600);
   while (!Serial) {ESP.wdtFeed();}
-  delay(250);
+  delay(500);
   Serial.println("Serial Initialized");
 
   if (!LittleFS.begin()) {
@@ -21,11 +22,9 @@ void setup() {
 
   #if MODE == 1
   controller = new Master();
-  #elif MODE = 2
+  #elif MODE == 2
   controller = new Follower();
   #endif
-
-  controller->setup();
 }
 
 void loop() {

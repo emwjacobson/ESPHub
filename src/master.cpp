@@ -9,9 +9,7 @@
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
 
-Master::Master(): server(AsyncWebServer(80)) {}
-
-void Master::setup() {
+Master::Master(): server(AsyncWebServer(80)) {
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
   this->setupSoftAP();
@@ -43,7 +41,6 @@ void Master::loop() {
   }
   Serial.println("");
 
-  // yield();
   delay(1000);
 }
 
@@ -53,10 +50,6 @@ void Master::setupSoftAP() {
 
   Serial.println("Ready to accept clients.");
   Serial.println(WiFi.softAPIP());
-}
-
-void Master::connectToAP() {
-  WiFi.begin(EXTERNAL_SSID, EXTERNAL_PASSWD);
 }
 
 void Master::registerEndpoints() {

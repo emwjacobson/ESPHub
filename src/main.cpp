@@ -16,8 +16,7 @@ Controller* controller;
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial) {ESP.wdtFeed();}
-  delay(500);
+  while (!Serial) {delay(1);}
   Serial.println("Serial Initialized");
 
   if (!LittleFS.begin()) {

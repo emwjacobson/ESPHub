@@ -72,20 +72,21 @@ void Master::loop() {
 void Master::registerEndpoints() {
   this->server.on("/data", HTTP_POST, [this](AsyncWebServerRequest* request) {
     // https://github.com/me-no-dev/ESPAsyncWebServer#get-post-and-file-parameters
-    if (request->hasParam("data", true) && request->hasParam("name", true)) {
-      AsyncWebParameter* data = request->getParam("data", true);
+    if (request->hasParam("name", true) && request->hasParam("type", true) && request->hasParam("value", true)) {
       AsyncWebParameter* node_name = request->getParam("name", true);
+      AsyncWebParameter* type = request->getParam("type", true);
+      AsyncWebParameter* value = request->getParam("value", true);
 
-      Serial.println("Got post value: " + data->value() + " from node " + node_name->value());
+      Serial.println(node_name->value() + " sent: " + type->value() + "=" + value->value());
 
-      this->data.add(ItemType{node_name->value(), data->value()});
+      this->data.add(ItemType{node_name->value(), type->value()});
 
       request->send(200, "text/plain", "OK");
       return;
     }
     String out = "An error has occured:\n";
-    if (!request->hasParam("data", true))
-      out.concat("Missing 'data' parameter\n");
+    if (!request->hasParam("type", true))
+      out.concat("Missing 'type' parameter\n");
     if (!request->hasParam("name", true))
       out.concat("Missing 'name' parameter\n");
     request->send(400, "text/plain", out);

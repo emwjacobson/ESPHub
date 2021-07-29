@@ -19,5 +19,6 @@
 
 //////// Follower Node Configuration ////////
 
+#define NODE_NAME_PREFIX "NODE_"
 
 #endif

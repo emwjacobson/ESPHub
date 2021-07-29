@@ -12,16 +12,13 @@
 
 Master::Master():
   server(AsyncWebServer(80)),
-  data([](Pair<String, String> pair){
-    delete pair.first;
-    delete pair.second;
-  })
+  data(nullptr)
   {
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
   Serial.println("ID: " + String(ESP.getChipId()));
   this->setupSoftAP(HUB_SSID, HUB_PASSWD);
-  this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
+  // this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
   this->registerEndpoints();
 }
 
@@ -55,24 +52,30 @@ void Master::loop() {
 void Master::registerEndpoints() {
   this->server.on("/data", HTTP_POST, [this](AsyncWebServerRequest* request) {
     // https://github.com/me-no-dev/ESPAsyncWebServer#get-post-and-file-parameters
-    if (request->hasParam("data", true)) {
-      AsyncWebParameter* p = request->getParam("data", true);
+    if (request->hasParam("data", true) && request->hasParam("name", true)) {
+      AsyncWebParameter* data = request->getParam("data", true);
+      AsyncWebParameter* node_name = request->getParam("name", true);
 
-      Serial.println("Got post value: " + p->value());
+      Serial.println("Got post value: " + data->value() + " from node " + node_name->value());
 
-      this->data.add(ItemType{ new String(ESP.getChipId()), new String(p->value()) });
+      this->data.add(ItemType{node_name->value(), data->value()});
 
       request->send(200, "text/plain", "OK");
       return;
     }
-    request->send(400, "text/plain", "This is an error!");
+    String out = "An error has occured:\n";
+    if (!request->hasParam("data", true))
+      out.concat("Missing 'data' parameter\n");
+    if (!request->hasParam("name", true))
+      out.concat("Missing 'name' parameter\n");
+    request->send(400, "text/plain", out);
   });
 
   this->server.on("/collect", HTTP_GET, [this](AsyncWebServerRequest* request) {
     String out;
 
-    for (auto temp = this->data.begin(); temp != nullptr; ++temp) {
-      out.concat(*(temp->first) + "=" + *(temp->second) + "\n");
+    for (auto temp = this->data.begin(); temp != this->data.end(); ++temp) {
+      out.concat(temp->first + "=" + temp->second + "\n");
     }
 
     request->send(200, "text/plain", out);

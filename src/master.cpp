@@ -23,6 +23,7 @@ Master::Master():
     Serial.println("Soft AP Enabled. IP: " + WiFi.softAPIP().toString());
   }
 
+  Serial.println("Attempting connection to '" + String(EXTERNAL_SSID) + "'");
   uint8_t res = this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
   switch (res) {
     case WL_CONNECTED:

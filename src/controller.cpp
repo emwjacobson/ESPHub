@@ -9,9 +9,6 @@
 int8_t Controller::connectToAP(String SSID, String passwd) {
   WiFi.begin(SSID, passwd);
 
-  Serial.println("Attempting connection to '" + SSID + "'");
-  delay(250);
-
   return WiFi.waitForConnectResult(60);
 }
 

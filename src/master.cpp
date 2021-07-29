@@ -16,9 +16,29 @@ Master::Master():
   {
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
+
   Serial.println("ID: " + String(ESP.getChipId()));
-  this->setupSoftAP(HUB_SSID, HUB_PASSWD);
-  // this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
+
+  if(!this->setupSoftAP(HUB_SSID, HUB_PASSWD)) {
+    Serial.println("Error setting up soft AP.");
+  } else {
+    Serial.println("Soft AP Enabled. IP: " + WiFi.softAPIP().toString());
+  }
+
+  uint8_t res = this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
+  switch (res) {
+    case WL_CONNECTED:
+      Serial.println("Connected to AP.");
+      break;
+    case WL_WRONG_PASSWORD:
+      Serial.println("Incorrect Password");
+      break;
+    case WL_NO_SSID_AVAIL:
+      Serial.println("SSID Not Available");
+      break;
+    default:
+      Serial.println("Error connecting to AP, code " + String(res));
+  }
   this->registerEndpoints();
 }
 

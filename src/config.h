@@ -7,7 +7,8 @@
 #define HUB_SSID "HUB WIFI"
 #define HUB_PASSWD "SomeFunkyPassword"
 
-
+// Set HUB_SSID_HIDDEN to 0 to hide SSID from showing up.
+#define HUB_SSID_HIDDEN 0
 
 //////// Master Node Configuration ////////
 

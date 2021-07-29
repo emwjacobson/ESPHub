@@ -4,24 +4,19 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "controller.h"
+#include "config.h"
 
-void Controller::connectToAP(String SSID, String passwd) {
+int8_t Controller::connectToAP(String SSID, String passwd) {
   WiFi.begin(SSID, passwd);
 
-  Serial.print("Connecting to '" + SSID + "'");
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(500);
-  }
-  Serial.println(" Connected!");
+  Serial.println("Attempting connection to '" + SSID + "'");
+
+  return WiFi.waitForConnectResult(60);
 }
 
-void Controller::setupSoftAP(String SSID, String passwd) {
+bool Controller::setupSoftAP(String SSID, String passwd) {
   WiFi.softAPConfig(IPAddress(10,1,0,1), IPAddress(10,1,0,1), IPAddress(255,255,255,0));
-  WiFi.softAP(SSID, passwd);
-
-  Serial.print("Ready to accept clients. IP: ");
-  Serial.println(WiFi.softAPIP());
+  return WiFi.softAP(SSID, passwd, 1, HUB_SSID_HIDDEN, 8);
 }
 
 #endif

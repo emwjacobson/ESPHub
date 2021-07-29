@@ -8,8 +8,15 @@
 #include "config.h"
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
+#include "Pair.h"
 
-Master::Master(): server(AsyncWebServer(80)) {
+Master::Master():
+  server(AsyncWebServer(80)),
+  data([](Pair<String, String> pair){
+    delete pair.first;
+    delete pair.second;
+  })
+  {
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
   Serial.println("ID: " + String(ESP.getChipId()));
@@ -49,19 +56,27 @@ void Master::registerEndpoints() {
   this->server.on("/data", HTTP_POST, [this](AsyncWebServerRequest* request) {
     // https://github.com/me-no-dev/ESPAsyncWebServer#get-post-and-file-parameters
     if (request->hasParam("data", true)) {
-      LinkedList<int> asd = LinkedList<int>(nullptr);
       AsyncWebParameter* p = request->getParam("data", true);
 
       Serial.println("Got post value: " + p->value());
-      this->data.concat(p->value());
-      request->send(200, "text/plain", "OKAY!");
+
+      this->data.add(ItemType{ new String(ESP.getChipId()), new String(p->value()) });
+
+      request->send(200, "text/plain", "OK");
       return;
     }
     request->send(400, "text/plain", "This is an error!");
   });
 
   this->server.on("/collect", HTTP_GET, [this](AsyncWebServerRequest* request) {
-    request->send(200, "text/plain", this->data);
+    String out;
+
+    for (auto temp = this->data.begin(); temp != nullptr; ++temp) {
+      out.concat(*(temp->first) + "=" + *(temp->second) + "\n");
+    }
+
+    request->send(200, "text/plain", out);
+    this->data.free();
   });
 
   this->server.begin();

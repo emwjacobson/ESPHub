@@ -12,8 +12,8 @@
 Master::Master(): server(AsyncWebServer(80)) {
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
-  this->setupSoftAP();
-  this->connectToAP();
+  this->setupSoftAP(HUB_SSID, HUB_PASSWD);
+  this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
   this->registerEndpoints();
 }
 
@@ -44,23 +44,17 @@ void Master::loop() {
   delay(1000);
 }
 
-void Master::setupSoftAP() {
-  WiFi.softAPConfig(IPAddress(10,1,0,1), IPAddress(10,1,0,1), IPAddress(255,255,255,0));
-  WiFi.softAP(HUB_SSID, HUB_PASSWD);
-
-  Serial.println("Ready to accept clients.");
-  Serial.println(WiFi.softAPIP());
-}
-
 void Master::registerEndpoints() {
-  this->server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
+  this->server.on("/", HTTP_POST, [](AsyncWebServerRequest* request) {
     // https://github.com/me-no-dev/ESPAsyncWebServer#get-post-and-file-parameters
-    // GET /?data=test
-    if (request->hasParam("data")) {
+    if (request->hasParam("data", true)) {
       AsyncWebParameter* p = request->getParam("data");
 
       Serial.println("Got post value: " + p->value());
+      request->send(200, "text/plain", "OKAY!");
+      return;
     }
+    request->send(400, "text/plain", "This is an error!");
   });
 }
 

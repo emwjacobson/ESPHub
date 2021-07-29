@@ -1,11 +1,15 @@
-#include <Arduino.h>
-#include <LittleFS.h>
-#include "master.h"
-#include "follower.h"
-#include "config.h"
-
 #ifndef MODE
 #define MODE 2
+#endif
+
+#include <Arduino.h>
+#include <LittleFS.h>
+#include "config.h"
+
+#if MODE == 1
+#include "master.h"
+#elif MODE == 2
+#include "follower.h"
 #endif
 
 Controller* controller;

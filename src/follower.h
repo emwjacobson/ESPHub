@@ -6,9 +6,8 @@
 class Follower : public Controller {
 public:
   Follower();
-  void loop();
+  void loop() override;
 private:
-  void connectToAP();
 };
 
 #endif

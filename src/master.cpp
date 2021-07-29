@@ -23,21 +23,14 @@ Master::Master():
     Serial.println("Soft AP Enabled. IP: " + WiFi.softAPIP().toString());
   }
 
-  Serial.println("Attempting connection to '" + String(EXTERNAL_SSID) + "'");
-  uint8_t res = this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
-  switch (res) {
-    case WL_CONNECTED:
-      Serial.println("Connected to AP.");
-      break;
-    case WL_WRONG_PASSWORD:
-      Serial.println("Incorrect Password");
-      break;
-    case WL_NO_SSID_AVAIL:
-      Serial.println("SSID Not Available");
-      break;
-    default:
-      Serial.println("Error connecting to AP, code " + String(res));
+  Serial.print("Attempting connection to '" + String(EXTERNAL_SSID) + "'");
+  this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
   }
+  Serial.print("Connected!");
+
   this->registerEndpoints();
 }
 

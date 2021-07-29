@@ -12,6 +12,7 @@
 Master::Master(): server(AsyncWebServer(80)) {
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
+  Serial.println("ID: " + String(ESP.getChipId()));
   this->setupSoftAP(HUB_SSID, HUB_PASSWD);
   this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
   this->registerEndpoints();
@@ -41,21 +42,30 @@ void Master::loop() {
   }
   Serial.println("");
 
-  delay(1000);
+  delay(5000);
 }
 
 void Master::registerEndpoints() {
-  this->server.on("/", HTTP_POST, [](AsyncWebServerRequest* request) {
+  this->server.on("/data", HTTP_POST, [this](AsyncWebServerRequest* request) {
     // https://github.com/me-no-dev/ESPAsyncWebServer#get-post-and-file-parameters
     if (request->hasParam("data", true)) {
-      AsyncWebParameter* p = request->getParam("data");
+      LinkedList<int> asd = LinkedList<int>(nullptr);
+      AsyncWebParameter* p = request->getParam("data", true);
 
       Serial.println("Got post value: " + p->value());
+      this->data.concat(p->value());
       request->send(200, "text/plain", "OKAY!");
       return;
     }
     request->send(400, "text/plain", "This is an error!");
   });
+
+  this->server.on("/collect", HTTP_GET, [this](AsyncWebServerRequest* request) {
+    request->send(200, "text/plain", this->data);
+  });
+
+  this->server.begin();
+  Serial.println("API Endpoints Registered.");
 }
 
 #endif

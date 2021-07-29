@@ -15,7 +15,7 @@ Follower::Follower() {
   // TODO: Collect sensor data and send to master
   WiFiClient wifi_client;
   HTTPClient http;
-  http.begin(wifi_client, IPAddress(10,1,0,1).toString());
+  http.begin(wifi_client, IPAddress(10,1,0,1).toString() + "/data");
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   int response_code = http.POST("data=Hello There!");
   Serial.println("Send with response code: " + String(response_code));

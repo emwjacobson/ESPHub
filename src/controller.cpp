@@ -7,13 +7,20 @@
 
 void Controller::connectToAP(String SSID, String passwd) {
   WiFi.begin(SSID, passwd);
+
+  Serial.print("Connecting to '" + SSID + "'");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println(" Connected!");
 }
 
 void Controller::setupSoftAP(String SSID, String passwd) {
   WiFi.softAPConfig(IPAddress(10,1,0,1), IPAddress(10,1,0,1), IPAddress(255,255,255,0));
   WiFi.softAP(SSID, passwd);
 
-  Serial.println("Ready to accept clients.");
+  Serial.print("Ready to accept clients. IP: ");
   Serial.println(WiFi.softAPIP());
 }
 

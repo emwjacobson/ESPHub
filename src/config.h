@@ -4,8 +4,8 @@
 //////// General Configuration ////////
 
 // HUB_SSID is the SSID that the Master node broadcasts and the Follower nodes connect to.
-#define HUB_SSID "HUB WIFI"
-#define HUB_PASSWD "SomeFunkyPassword"
+#define HUB_SSID "ESPHub"
+#define HUB_PASSWD "ESPHubPassword"
 
 // Set HUB_SSID_HIDDEN to 0 to hide SSID from showing up.
 #define HUB_SSID_HIDDEN 0
@@ -25,6 +25,8 @@
 
 //////// Follower Node Configuration ////////
 
-#define NODE_NAME_PREFIX "NODE_"
+// NODE_NAME is who the node will report it's data as, should be
+//unique between devices if you want seperate entities.
+#define NODE_NAME "Bedroom"
 
 #endif

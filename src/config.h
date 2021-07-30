@@ -10,6 +10,10 @@
 // Set HUB_SSID_HIDDEN to 0 to hide SSID from showing up.
 #define HUB_SSID_HIDDEN 0
 
+// NODE_NAME is who the node will report it's data as, should be
+// unique between devices if you want seperate entities.
+#define NODE_NAME "Bedroom"
+
 
 
 //////// Master Node Configuration ////////
@@ -25,8 +29,6 @@
 
 //////// Follower Node Configuration ////////
 
-// NODE_NAME is who the node will report it's data as, should be
-//unique between devices if you want seperate entities.
-#define NODE_NAME "Bedroom"
+
 
 #endif

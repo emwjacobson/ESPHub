@@ -43,7 +43,7 @@ Follower::Follower() {
   Serial.println("Sent with response code: " + String(response_code));
   Serial.println(http.getString());
 
-  Serial.println("Took " + String((millis() - start)/1000) + " seconds. Starting deep sleep.");
+  Serial.println("Took " + String((millis() - start)) + " ms. Starting deep sleep.");
   // Deep sleep for 1-2 minutes
   long time = random(60e6, 120e6);
   ESP.deepSleep(time);

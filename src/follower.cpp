@@ -32,18 +32,17 @@ Follower::Follower() {
   String type = "temperature";
   String value = "100";
 
-  // TODO: Decide on whether it should be 1 request per sensor,
-  // or 1 request containing data from multiple sensors
-
   String data;
   data.concat("name=" + String(NODE_NAME));
   data.concat("&type=" + type);
   data.concat("&value=" + value);
+  time_t start_req = micros();
   int response_code = http.POST(data);
+  time_t end_req = micros();
   Serial.println("Sent with response code: " + String(response_code));
   Serial.println(http.getString());
 
-  Serial.println("Took " + String((millis() - start)) + " ms. Starting deep sleep.");
+  Serial.println("Took " + String((millis() - start)) + " ms. Starting deep sleep." + String(end_req - start_req));
   // Deep sleep for 1-2 minutes
   long time = random(60e6, 120e6);
   ESP.deepSleep(time);

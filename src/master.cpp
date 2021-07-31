@@ -119,7 +119,6 @@ void Master::registerEndpoints() {
   });
 
 
-
   this->server.on("/collect", HTTP_GET, [this](AsyncWebServerRequest* request) {
     // {
     //   "num_devices": "2",
@@ -143,8 +142,8 @@ void Master::registerEndpoints() {
       if (node_it != this->nodes.begin()) out.concat(",");
       out.concat("\"" + (*node_it).getNodeName() + "\":{");
 
-      for (auto data_it = (*node_it).begin(); data_it != (*node_it).end(); ++data_it) {
-        if (data_it != (*node_it).begin()) out.concat(",");
+      for (auto data_it = (*node_it).getData().begin(); data_it != (*node_it).getData().end(); ++data_it) {
+        if (data_it != (*node_it).getData().begin()) out.concat(",");
         out.concat("\"" + (*data_it).first + "\":\"" + (*data_it).second + "\"");
       }
       out.concat("}");
@@ -197,6 +196,11 @@ int Master::DataElement::setData(const String& key, const String& value) {
     (*it).second = value;
 
     return 0;
+}
+
+
+const Array<std::pair<String, String>, MAX_SENSORS>& Master::DataElement::getData() {
+  return this->data;
 }
 
 #endif

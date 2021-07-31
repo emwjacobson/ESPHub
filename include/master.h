@@ -17,8 +17,7 @@ public:
     DataElement(String name): node_name(name) {}
     String getNodeName() const { return node_name; }
     int setData(const String& key, const String& value);
-    Array<std::pair<String, String>, MAX_SENSORS>::iterator begin() { return this->data.begin(); }
-    Array<std::pair<String, String>, MAX_SENSORS>::iterator end() { return this->data.end(); }
+    const Array<std::pair<String, String>, MAX_SENSORS>& getData();
   private:
     String node_name;
     Array<std::pair<String, String>, MAX_SENSORS> data;

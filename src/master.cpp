@@ -29,7 +29,7 @@ Master::Master():
     Serial.print(".");
     delay(500);
   }
-  Serial.print("Connected!");
+  Serial.println("\nConnected!");
 
   this->registerEndpoints();
 }
@@ -159,11 +159,11 @@ void Master::registerEndpoints() {
 
   // Get stats on the server
   this->server.on("/stats", HTTP_GET, [](AsyncWebServerRequest* request) {
-    String out = "{";
     // {
     //   "Heap Free": "123",
     //   "Heap Fragmentation": 123
     // }
+    String out = "{";
     out.concat("\"Heap Free\": \"" + String(ESP.getFreeHeap()) + "\",");
     out.concat("\"Heap Fragmentation\": \"" + String(ESP.getHeapFragmentation()) + "\"");
 

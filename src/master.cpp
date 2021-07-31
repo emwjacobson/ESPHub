@@ -7,7 +7,6 @@
 #include "config.h"
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
-#include "Pair.h"
 
 Master::Master():
   server(AsyncWebServer(80))
@@ -98,7 +97,7 @@ void Master::registerEndpoints() {
           request->send(400, "text/plain", "Error: Maximum number of nodes added.");
           return;
         }
-        this->nodes.push_back(DataElement(node_name->value()));
+        this->nodes.push_back(std::move(DataElement(node_name->value())));
       }
 
       // At this point (*it) should be the node were looking for
@@ -175,7 +174,12 @@ void Master::registerEndpoints() {
   Serial.println("API Endpoints Registered.");
 }
 
-int Master::DataElement::setData(String key, String value) {
+
+
+
+
+
+int Master::DataElement::setData(const String& key, const String& value) {
     auto it = this->data.begin();
     for(; it != this->data.end(); ++it) {
       if ((*it).first.equals(key)) break;
@@ -187,7 +191,7 @@ int Master::DataElement::setData(String key, String value) {
         Serial.println("Unable to add new sensor data, array is full.");
         return 1;
       }
-      this->data.push_back(Pair<String, String>{key, value});
+      this->data.push_back(std::move(std::pair<String, String>{key, value}));
     }
 
     (*it).second = value;

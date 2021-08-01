@@ -97,7 +97,7 @@ void Master::registerEndpoints() {
           request->send(400, "text/plain", "Error: Maximum number of nodes added.");
           return;
         }
-        this->nodes.push_back(std::move(DataElement(node_name->value())));
+        this->nodes.push_back(DataElement(node_name->value()));
       }
 
       // At this point (*it) should be the node were looking for
@@ -144,7 +144,11 @@ void Master::registerEndpoints() {
 
       for (auto data_it = (*node_it).getData().begin(); data_it != (*node_it).getData().end(); ++data_it) {
         if (data_it != (*node_it).getData().begin()) out.concat(",");
-        out.concat("\"" + (*data_it).first + "\":\"" + (*data_it).second + "\"");
+        out.concat("\"");
+        out.concat((*data_it).getType());
+        out.concat("\":\"");
+        out.concat((*data_it).getValue());
+        out.concat("\"");
       }
       out.concat("}");
 
@@ -181,7 +185,7 @@ void Master::registerEndpoints() {
 int Master::DataElement::setData(const String& key, const String& value) {
     auto it = this->data.begin();
     for(; it != this->data.end(); ++it) {
-      if ((*it).first.equals(key)) break;
+      if ((*it).getType().equals(key)) break;
     }
 
     // If data is not already in the list then add it
@@ -190,16 +194,16 @@ int Master::DataElement::setData(const String& key, const String& value) {
         Serial.println("Unable to add new sensor data, array is full.");
         return 1;
       }
-      this->data.push_back(std::move(std::pair<String, String>{key, value}));
+      this->data.push_back(Sensor{key, value});
     }
 
-    (*it).second = value;
+    (*it).setValue(value);
 
     return 0;
 }
 
 
-const Array<std::pair<String, String>, MAX_SENSORS>& Master::DataElement::getData() {
+const Array<Sensor, MAX_SENSORS>& Master::DataElement::getData() {
   return this->data;
 }
 

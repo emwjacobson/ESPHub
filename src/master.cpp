@@ -103,7 +103,7 @@ void Master::registerEndpoints() {
       }
 
       // At this point (*it) should be the node were looking for
-      int res = (*it).setData(type->value(), value->value());
+      int res = (*it).setData(type->value().c_str(), value->value().c_str());
       if (res == 1) {
         request->send(400, "text/plain", "Error: Maximum number of sensors added to " + (*it).getNodeName());
         return;
@@ -135,8 +135,16 @@ void Master::registerEndpoints() {
     //     }
     //   }
     // }
-    String out = "{\"num_devices\":\"" + String(this->nodes.size()) + "\",";
-    out.concat("\"max_devices\":\"" + String(this->nodes.max_size()) + "\",");
+
+    // #7 https://cpp4arduino.com/2018/11/21/eight-tips-to-use-the-string-class-efficiently.html
+    String out((char*)0);
+    out.reserve(128);
+    out.concat("{\"num_devices\":\"");
+    out.concat(this->nodes.size());
+    out.concat("\",");
+    out.concat("\"max_devices\":\"");
+    out.concat(this->nodes.max_size());
+    out.concat("\",");
     out.concat("\"nodes\": {");
 
     for (auto node_it = this->nodes.begin(); node_it != this->nodes.end(); ++node_it) {
@@ -184,7 +192,7 @@ void Master::registerEndpoints() {
 
 
 
-int Master::DataElement::setData(const String& key, const String& value) {
+int Master::DataElement::setData(const char* key, const char* value) {
     auto it = this->data.begin();
     for(; it != this->data.end(); ++it) {
       if ((*it).getType().equals(key)) break;

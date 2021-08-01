@@ -17,7 +17,7 @@ public:
     DataElement(): node_name("") {}
     DataElement(String name): node_name(name) {}
     String getNodeName() const { return node_name; }
-    int setData(const String& key, const String& value);
+    int setData(const char* key, const char* value);
     const Array<Sensor, MAX_SENSORS>& getData();
   private:
     String node_name;

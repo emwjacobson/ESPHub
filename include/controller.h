@@ -5,8 +5,8 @@ class Controller {
 public:
   virtual void loop() = 0;
 protected:
-  int8_t connectToAP(String SSID, String passwd);
-  bool setupSoftAP(String SSID, String passwd);
+  int8_t connectToAP(const String& SSID, const String& passwd);
+  bool setupSoftAP(const String& SSID, const String& passwd);
 };
 
 #endif

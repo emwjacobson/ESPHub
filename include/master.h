@@ -5,7 +5,6 @@
 #include <Array.h>
 #include "config.h"
 #include "controller.h"
-#include "Pair.h"
 
 class Master : public Controller {
 public:
@@ -15,15 +14,13 @@ public:
   class DataElement {
   public:
     DataElement(): node_name("") {}
-    DataElement(String name):
-      node_name(name) {}
+    DataElement(String name): node_name(name) {}
     String getNodeName() const { return node_name; }
-    int setData(String key, String value);
-    Array<Pair<String, String>, MAX_SENSORS>::iterator begin() { return this->data.begin(); }
-    Array<Pair<String, String>, MAX_SENSORS>::iterator end() { return this->data.end(); }
+    int setData(const String& key, const String& value);
+    const Array<std::pair<String, String>, MAX_SENSORS>& getData();
   private:
     String node_name;
-    Array<Pair<String, String>, MAX_SENSORS> data;
+    Array<std::pair<String, String>, MAX_SENSORS> data;
   };
 
 private:

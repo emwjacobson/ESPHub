@@ -14,15 +14,17 @@ Master::Master():
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
 
-  Serial.println("ID: " + String(ESP.getChipId()));
+  Serial.println("ID: ");
+  Serial.println(ESP.getChipId());
 
   if(!this->setupSoftAP(HUB_SSID, HUB_PASSWD)) {
     Serial.println("Error setting up soft AP.");
   } else {
-    Serial.println("Soft AP Enabled. IP: " + WiFi.softAPIP().toString());
+    Serial.println("Soft AP Enabled. IP: ");
+    Serial.println(WiFi.softAPIP());
   }
 
-  Serial.print("Attempting connection to '" + String(EXTERNAL_SSID) + "'");
+  Serial.print("Attempting connection to '" EXTERNAL_SSID "'");
   this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");

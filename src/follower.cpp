@@ -29,8 +29,8 @@ Follower::Follower() {
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
   // TODO: Implement real sensor readings
-  char* type = "temperature";
-  char* value = "100";
+  const char* type = "temperature";
+  const char* value = "100";
 
   String data;
   data.concat("name=" NODE_NAME);

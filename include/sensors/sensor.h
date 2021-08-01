@@ -2,18 +2,18 @@
 #define SENSOR_H
 
 #include "Arduino.h"
+#include "config.h"
 
 class Sensor {
 public:
   Sensor();
-  Sensor(const String& type, const String& value);
-  Sensor(String&& type, String&& value);
-  const String& getType() const;
-  const String& getValue() const;
-  void setValue(const String& value);
+  Sensor(const char* type, const char* value);
+  const char* getType() const;
+  const char* getValue() const;
+  void setValue(const char* value);
 private:
-  String type;
-  String value;
+  char* type[TYPE_BUFFER + 1];
+  char* value[VALUE_BUFFER + 1];
 };
 
 #endif

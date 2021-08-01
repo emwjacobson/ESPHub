@@ -14,6 +14,11 @@
 // unique between devices if you want seperate entities.
 #define NODE_NAME "Bedroom"
 
+// The buffer sizes are the maximum length of characters for the
+// type and value of sensors.
+#define TYPE_BUFFER 16
+#define VALUE_BUFFER 8
+
 
 
 //////// Master Node Configuration ////////

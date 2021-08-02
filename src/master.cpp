@@ -195,7 +195,7 @@ void Master::registerEndpoints() {
 int Master::DataElement::setData(const char* key, const char* value) {
     auto it = this->data.begin();
     for(; it != this->data.end(); ++it) {
-      if (strcmp((*it).getType(), key)) break;
+      if (strncmp((*it).getType(), key, TYPE_BUFFER)) break;
     }
 
     // If data is not already in the list then add it

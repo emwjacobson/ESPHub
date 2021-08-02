@@ -151,19 +151,28 @@ void Master::registerEndpoints() {
     out.concat("\",");
     out.concat("\"nodes\": {");
 
-    for (auto node_it = this->nodes.begin(); node_it != this->nodes.end(); ++node_it) {
-      if (node_it != this->nodes.begin()) out.concat(",");
+    bool node_first = true;
+    bool data_first = true;
+    for (const auto node_it : this->nodes) {
+      if (node_first) {
+        out.concat(",");
+        node_first = false;
+      }
 
       out.concat("\"");
-      out.concat((*node_it).getNodeName());
+      out.concat(node_it.getNodeName());
       out.concat("\":{");
 
-      for (auto data_it = (*node_it).getData().begin(); data_it != (*node_it).getData().end(); ++data_it) {
-        if (data_it != (*node_it).getData().begin()) out.concat(",");
+      data_first = true;
+      for (const auto data_it : node_it.getData()) {
+        if (data_first) {
+          out.concat(",");
+          data_first = false;
+        }
         out.concat("\"");
-        out.concat((*data_it).getType());
+        out.concat(data_it.getType());
         out.concat("\":\"");
-        out.concat((*data_it).getValue());
+        out.concat(data_it.getValue());
         out.concat("\"");
       }
       out.concat("}");
@@ -219,7 +228,7 @@ int Master::DataElement::setData(const char* key, const char* value) {
 }
 
 
-const Array<Sensor, MAX_SENSORS>& Master::DataElement::getData() {
+const Array<Sensor, MAX_SENSORS>& Master::DataElement::getData() const {
   return this->data;
 }
 

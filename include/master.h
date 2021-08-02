@@ -25,7 +25,7 @@ public:
     }
     const char* getNodeName() const { return *node_name; }
     int setData(const char* key, const char* value);
-    const Array<Sensor, MAX_SENSORS>& getData();
+    const Array<Sensor, MAX_SENSORS>& getData() const;
   private:
     char* node_name[NAME_BUFFER + 1];
     Array<Sensor, MAX_SENSORS> data;

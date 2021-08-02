@@ -4,28 +4,36 @@
 #include "Arduino.h"
 #include "sensors/sensor.h"
 
-Sensor::Sensor()
-  : type(""), value("")
-{}
-
-Sensor::Sensor(const String& type, const String& value)
-  : type(type), value(value)
-{}
-
-Sensor::Sensor(String&& type, String&& value)
-  : type(std::move(type)), value(std::move(value))
-{}
-
-const String& Sensor::getType() const {
-  return this->type;
+Sensor::Sensor() {
+  type[0] = 0;
+  value[0] = 0;
 }
 
-const String& Sensor::getValue() const {
-  return this->value;
+Sensor::Sensor(const char* type, const char* value) {
+  int len = strlen(type);
+  len = len > TYPE_BUFFER ? TYPE_BUFFER : len;
+  memcpy(this->type, type, len);
+  this->type[len] = 0;
+
+  len = strlen(value);
+  len = len > VALUE_BUFFER ? VALUE_BUFFER : len;
+  memcpy(this->value, value, len);
+  this->value[len] = 0;
 }
 
-void Sensor::setValue(const String& value) {
-  this->value = value;
+const char* Sensor::getType() const {
+  return *type;
+}
+
+const char* Sensor::getValue() const {
+  return *value;
+}
+
+void Sensor::setValue(const char* value) {
+  int len = strlen(value);
+  len = len > VALUE_BUFFER ? VALUE_BUFFER : len;
+  memcpy(this->value, value, len);
+  this->value[len] = 0;
 }
 
 #endif

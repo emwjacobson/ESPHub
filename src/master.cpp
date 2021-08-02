@@ -14,15 +14,17 @@ Master::Master():
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
 
-  Serial.println("ID: " + String(ESP.getChipId()));
+  Serial.println("ID: ");
+  Serial.println(ESP.getChipId());
 
   if(!this->setupSoftAP(HUB_SSID, HUB_PASSWD)) {
     Serial.println("Error setting up soft AP.");
   } else {
-    Serial.println("Soft AP Enabled. IP: " + WiFi.softAPIP().toString());
+    Serial.println("Soft AP Enabled. IP: ");
+    Serial.println(WiFi.softAPIP());
   }
 
-  Serial.print("Attempting connection to '" + String(EXTERNAL_SSID) + "'");
+  Serial.print("Attempting connection to '" EXTERNAL_SSID "'");
   this->connectToAP(EXTERNAL_SSID, EXTERNAL_PASSWD);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
@@ -86,7 +88,7 @@ void Master::registerEndpoints() {
       // Check if it exists
       auto it = this->nodes.begin();
       for(; it != this->nodes.end(); ++it) {
-        if ((*it).getNodeName().equals(node_name->value())) break;
+        if (strncmp((*it).getNodeName(), node_name->value().c_str(), NAME_BUFFER) == 0) break;
       }
 
       // If node is not already in the list then add it
@@ -97,13 +99,17 @@ void Master::registerEndpoints() {
           request->send(400, "text/plain", "Error: Maximum number of nodes added.");
           return;
         }
-        this->nodes.push_back(DataElement(node_name->value()));
+        this->nodes.push_back(DataElement(node_name->value().c_str()));
       }
 
       // At this point (*it) should be the node were looking for
-      int res = (*it).setData(type->value(), value->value());
+      int res = (*it).setData(type->value().c_str(), value->value().c_str());
       if (res == 1) {
-        request->send(400, "text/plain", "Error: Maximum number of sensors added to " + (*it).getNodeName());
+        String out((char*)0);
+        out.reserve(42 + NAME_BUFFER + 1);
+        out.concat("Error: Maximum number of sensors added to ");
+        out.concat((*it).getNodeName());
+        request->send(400, "text/plain", out);
         return;
       }
 
@@ -133,21 +139,40 @@ void Master::registerEndpoints() {
     //     }
     //   }
     // }
-    String out = "{\"num_devices\":\"" + String(this->nodes.size()) + "\",";
-    out.concat("\"max_devices\":\"" + String(this->nodes.max_size()) + "\",");
+
+    // #7 https://cpp4arduino.com/2018/11/21/eight-tips-to-use-the-string-class-efficiently.html
+    String out((char*)0);
+    out.reserve(128);
+    out.concat("{\"num_devices\":\"");
+    out.concat(this->nodes.size());
+    out.concat("\",");
+    out.concat("\"max_devices\":\"");
+    out.concat(this->nodes.max_size());
+    out.concat("\",");
     out.concat("\"nodes\": {");
 
-    for (auto node_it = this->nodes.begin(); node_it != this->nodes.end(); ++node_it) {
+    bool node_first = true;
+    bool data_first = true;
+    for (const auto node_it : this->nodes) {
+      if (node_first) {
+        out.concat(",");
+        node_first = false;
+      }
 
-      if (node_it != this->nodes.begin()) out.concat(",");
-      out.concat("\"" + (*node_it).getNodeName() + "\":{");
+      out.concat("\"");
+      out.concat(node_it.getNodeName());
+      out.concat("\":{");
 
-      for (auto data_it = (*node_it).getData().begin(); data_it != (*node_it).getData().end(); ++data_it) {
-        if (data_it != (*node_it).getData().begin()) out.concat(",");
+      data_first = true;
+      for (const auto data_it : node_it.getData()) {
+        if (data_first) {
+          out.concat(",");
+          data_first = false;
+        }
         out.concat("\"");
-        out.concat((*data_it).getType());
+        out.concat(data_it.getType());
         out.concat("\":\"");
-        out.concat((*data_it).getValue());
+        out.concat(data_it.getValue());
         out.concat("\"");
       }
       out.concat("}");
@@ -182,10 +207,10 @@ void Master::registerEndpoints() {
 
 
 
-int Master::DataElement::setData(const String& key, const String& value) {
+int Master::DataElement::setData(const char* key, const char* value) {
     auto it = this->data.begin();
     for(; it != this->data.end(); ++it) {
-      if ((*it).getType().equals(key)) break;
+      if (strncmp((*it).getType(), key, TYPE_BUFFER) == 0) break;
     }
 
     // If data is not already in the list then add it
@@ -203,7 +228,7 @@ int Master::DataElement::setData(const String& key, const String& value) {
 }
 
 
-const Array<Sensor, MAX_SENSORS>& Master::DataElement::getData() {
+const Array<Sensor, MAX_SENSORS>& Master::DataElement::getData() const {
   return this->data;
 }
 

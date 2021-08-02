@@ -15,7 +15,8 @@
 #define NODE_NAME "Bedroom"
 
 // The buffer sizes are the maximum length of characters for the
-// type and value of sensors.
+// node name, type, and value of sensors.
+#define NAME_BUFFER 16
 #define TYPE_BUFFER 16
 #define VALUE_BUFFER 8
 

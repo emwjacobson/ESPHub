@@ -88,7 +88,7 @@ void Master::registerEndpoints() {
       // Check if it exists
       auto it = this->nodes.begin();
       for(; it != this->nodes.end(); ++it) {
-        if ((*it).getNodeName().equals(node_name->value())) break;
+        if (strncmp((*it).getNodeName(), node_name->value().c_str(), NAME_BUFFER) == 0) break;
       }
 
       // If node is not already in the list then add it
@@ -99,13 +99,17 @@ void Master::registerEndpoints() {
           request->send(400, "text/plain", "Error: Maximum number of nodes added.");
           return;
         }
-        this->nodes.push_back(DataElement(node_name->value()));
+        this->nodes.push_back(DataElement(node_name->value().c_str()));
       }
 
       // At this point (*it) should be the node were looking for
       int res = (*it).setData(type->value().c_str(), value->value().c_str());
       if (res == 1) {
-        request->send(400, "text/plain", "Error: Maximum number of sensors added to " + (*it).getNodeName());
+        String out((char*)0);
+        out.reserve(42 + NAME_BUFFER + 1);
+        out.concat("Error: Maximum number of sensors added to ");
+        out.concat((*it).getNodeName());
+        request->send(400, "text/plain", out);
         return;
       }
 
@@ -148,9 +152,11 @@ void Master::registerEndpoints() {
     out.concat("\"nodes\": {");
 
     for (auto node_it = this->nodes.begin(); node_it != this->nodes.end(); ++node_it) {
-
       if (node_it != this->nodes.begin()) out.concat(",");
-      out.concat("\"" + (*node_it).getNodeName() + "\":{");
+
+      out.concat("\"");
+      out.concat((*node_it).getNodeName());
+      out.concat("\":{");
 
       for (auto data_it = (*node_it).getData().begin(); data_it != (*node_it).getData().end(); ++data_it) {
         if (data_it != (*node_it).getData().begin()) out.concat(",");
@@ -195,7 +201,7 @@ void Master::registerEndpoints() {
 int Master::DataElement::setData(const char* key, const char* value) {
     auto it = this->data.begin();
     for(; it != this->data.end(); ++it) {
-      if (strncmp((*it).getType(), key, TYPE_BUFFER)) break;
+      if (strncmp((*it).getType(), key, TYPE_BUFFER) == 0) break;
     }
 
     // If data is not already in the list then add it

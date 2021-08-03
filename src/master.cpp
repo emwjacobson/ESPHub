@@ -86,42 +86,39 @@ void Master::registerEndpoints() {
       AsyncWebParameter* type = request->getParam("type", true);
       AsyncWebParameter* value = request->getParam("value", true);
 
-      // Check if it exists
-      auto it = this->nodes.begin();
-      for(; it != this->nodes.end(); ++it) {
-        if (strncmp((*it).getNodeName(), node_name->value().c_str(), NAME_BUFFER) == 0) break;
+      int i = 0;
+      for(; i < this->num_nodes; i++) {
+        if (strcmp(this->nodes[i].getNodeName(), node_name->value().c_str()) == 0) {
+          break; // Found a match
+        }
       }
 
-      // If node is not already in the list then add it
-      if (it == this->nodes.end()) {
-        // If nodes are full, then error out
-        if (this->nodes.full()) {
-          Serial.println("Unable to add new node, array is full.");
-          request->send(400, "text/plain", "Error: Maximum number of nodes added.");
+      // If i == num_nodes, then the node was not found
+      if (i == this->num_nodes) {
+        // Check to make sure there is room for more nodes
+        if (this->num_nodes == MAX_NODES) {
+          const char* err = "Cannot add more nodes";
+          Serial.println(err);
+          request->send(200, "text/plain", err);
           return;
         }
-        Serial.println("Adding node...");
-        this->nodes.push_back(Node(node_name->value().c_str()));
-        Serial.println("Done Adding Node!");
+        this->nodes[i].setNodeName(node_name->value().c_str());
+        this->num_nodes++;
       }
 
-      Serial.println("Done Adding Node if not exists.");
+      // At this point, i is the node were interested in
 
-      // At this point (*it) should be the node were looking for
-
-      // int res = (*it).setData(type->value().c_str(), value->value().c_str());
-      // if (res == 1) {
-      //   String out((char*)0);
-      //   out.reserve(42 + NAME_BUFFER + 1);
-      //   out.concat("Error: Maximum number of sensors added to ");
-      //   out.concat((*it).getNodeName());
-      //   request->send(400, "text/plain", out);
-      //   return;
-      // }
+      int res = this->nodes[i].setData(type->value().c_str(), value->value().c_str());
+      if (res == 1) {
+        const char* err = "Cannot add more sensors to device";
+        request->send(400, "text/plain", err);
+        return;
+      }
 
       request->send(200, "text/plain", "OK");
       return;
     }
+
     String out = "An error has occured:\n";
     if (!request->hasParam("type", true))
       out.concat("Missing 'type' parameter\n");
@@ -150,39 +147,30 @@ void Master::registerEndpoints() {
     String out((char*)0);
     out.reserve(128);
     out.concat("{\"num_devices\":\"");
-    out.concat(this->nodes.size());
+    out.concat(this->num_nodes);
     out.concat("\",");
     out.concat("\"max_devices\":\"");
-    out.concat(this->nodes.max_size());
+    out.concat(MAX_NODES);
     out.concat("\",");
     out.concat("\"nodes\": {");
 
-    // bool node_first = true;
-    // bool data_first = true;
-    for (const auto node_it : this->nodes) {
-      // if (node_first) {
-      //   out.concat(",");
-      //   node_first = false;
-      // }
-
+    for(int i = 0; i < this->num_nodes; i++) {
       out.concat("\"");
-      out.concat(node_it.getNodeName());
+      out.concat(this->nodes[i].getNodeName());
       out.concat("\":{");
 
-    //   // data_first = true;
-    //   // for (const auto data_it : node_it.getData()) {
-    //   //   if (data_first) {
-    //   //     out.concat(",");
-    //   //     data_first = false;
-    //   //   }
-    //   //   out.concat("\"");
-    //   //   out.concat(data_it.getType());
-    //   //   out.concat("\":\"");
-    //   //   out.concat(data_it.getValue());
-    //   //   out.concat("\"");
-    //   // }
-      out.concat("}");
+      Node n = this->nodes[i];
+      for(int j = 0; j < n.getNumSensors(); j++) {
+        out.concat("\"");
+        out.concat(n.getData()[j].getType());
+        out.concat("\":\"");
+        out.concat(n.getData()[j].getValue());
+        out.concat("\"");
+        if (j < n.getNumSensors() - 1) out.concat(",");
+      }
 
+      out.concat("}");
+      if (i < this->num_nodes - 1) out.concat(",");
     }
 
     out.concat("}}");
@@ -213,35 +201,38 @@ void Master::registerEndpoints() {
 
 
 
-int Master::Node::setData(const char* key, const char* value) {
-  Serial.println("Setting Data...");
-  auto it = this->data.begin();
-  for(; it != this->data.end(); ++it) {
-    if (strncmp((*it).getType(), key, TYPE_BUFFER) == 0) break;
+int Node::setData(const char* type, const char* value) {
+  int i = 0;
+  for(; i < this->num_sensors; i++) {
+    if (strcmp(this->data[i].getType(), type) == 0) {
+      break; // The type already exists
+    }
   }
-  Serial.println("Got node or none");
 
-  // If data is not already in the list then add it
-  if (it == this->data.end()) {
-    if (this->data.full()) {
-      Serial.println("Unable to add new sensor data, array is full.");
+  // If it doesnt exist, then add it
+  if (i == this->num_sensors) {
+    if (i == MAX_SENSORS) {
+      const char* err = "Cannot add more sensors";
+      Serial.println(err);
       return 1;
     }
-    this->data.push_back(ManagedSensor{key, value});
+
+    this->data[i].setType(type);
+    this->num_sensors++;
   }
 
-  Serial.println("Added if empty");
-
-  (*it).setValue(value);
-
-  Serial.println("Added data");
+  this->data[i].setValue(value);
 
   return 0;
 }
 
 
-const Array<ManagedSensor, MAX_SENSORS>& Master::Node::getData() const {
+const ManagedSensor* Node::getData() const {
   return this->data;
+}
+
+const int& Node::getNumSensors() {
+  return this->num_sensors;
 }
 
 #endif

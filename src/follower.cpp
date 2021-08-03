@@ -6,6 +6,7 @@
 #include <ESP8266HTTPClient.h>
 #include "config.h"
 #include "follower.h"
+#include "sensors/DHT11.h"
 
 Follower::Follower() {
   time_t start = millis();
@@ -24,20 +25,18 @@ Follower::Follower() {
   WiFiClient wifi_client;
   HTTPClient http;
   // TODO: Return this to original IP address.
-  // http.begin(wifi_client, "http://922c0c5a-8560-4919-995c-5367af83939a.mock.pstmn.io/data");
-  http.begin(wifi_client, "http://10.1.0.1/data");
+  http.begin(wifi_client, "https://d89369fb-8a3f-4325-95b7-8580a84fe800.mock.pstmn.io/data");
+  // http.begin(wifi_client, "http://10.1.0.1/data");
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-  // TODO: Implement real sensor readings
-  const char* type = "temperature";
-  const char* value = "100";
+  DHT11Sensor sensor;
 
   String data;
   data.concat("name=" NODE_NAME);
   data.concat("&type=");
-  data.concat(type);
+  data.concat(sensor.getType());
   data.concat("&value=");
-  data.concat(value);
+  data.concat(sensor.getValue());
   time_t start_req = micros();
   int response_code = http.POST(data);
   time_t end_req = micros();

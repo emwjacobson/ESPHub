@@ -8,7 +8,7 @@ class Sensor {
 public:
   Sensor();
   const char* getType() const;
-  virtual const char* getValue() const = 0;
+  virtual const char* getValue() = 0;
 protected:
   Sensor(const char* type);
   char type[TYPE_BUFFER + 1];

@@ -7,6 +7,7 @@
 #include "config.h"
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
+#include "sensors/ManagedSensor.h"
 
 Master::Master():
   server(AsyncWebServer(80))
@@ -99,19 +100,24 @@ void Master::registerEndpoints() {
           request->send(400, "text/plain", "Error: Maximum number of nodes added.");
           return;
         }
-        this->nodes.push_back(DataElement(node_name->value().c_str()));
+        Serial.println("Adding node...");
+        this->nodes.push_back(Node(node_name->value().c_str()));
+        Serial.println("Done Adding Node!");
       }
 
+      Serial.println("Done Adding Node if not exists.");
+
       // At this point (*it) should be the node were looking for
-      int res = (*it).setData(type->value().c_str(), value->value().c_str());
-      if (res == 1) {
-        String out((char*)0);
-        out.reserve(42 + NAME_BUFFER + 1);
-        out.concat("Error: Maximum number of sensors added to ");
-        out.concat((*it).getNodeName());
-        request->send(400, "text/plain", out);
-        return;
-      }
+
+      // int res = (*it).setData(type->value().c_str(), value->value().c_str());
+      // if (res == 1) {
+      //   String out((char*)0);
+      //   out.reserve(42 + NAME_BUFFER + 1);
+      //   out.concat("Error: Maximum number of sensors added to ");
+      //   out.concat((*it).getNodeName());
+      //   request->send(400, "text/plain", out);
+      //   return;
+      // }
 
       request->send(200, "text/plain", "OK");
       return;
@@ -151,30 +157,30 @@ void Master::registerEndpoints() {
     out.concat("\",");
     out.concat("\"nodes\": {");
 
-    bool node_first = true;
-    bool data_first = true;
+    // bool node_first = true;
+    // bool data_first = true;
     for (const auto node_it : this->nodes) {
-      if (node_first) {
-        out.concat(",");
-        node_first = false;
-      }
+      // if (node_first) {
+      //   out.concat(",");
+      //   node_first = false;
+      // }
 
       out.concat("\"");
       out.concat(node_it.getNodeName());
       out.concat("\":{");
 
-      data_first = true;
-      for (const auto data_it : node_it.getData()) {
-        if (data_first) {
-          out.concat(",");
-          data_first = false;
-        }
-        out.concat("\"");
-        out.concat(data_it.getType());
-        out.concat("\":\"");
-        out.concat(data_it.getValue());
-        out.concat("\"");
-      }
+    //   // data_first = true;
+    //   // for (const auto data_it : node_it.getData()) {
+    //   //   if (data_first) {
+    //   //     out.concat(",");
+    //   //     data_first = false;
+    //   //   }
+    //   //   out.concat("\"");
+    //   //   out.concat(data_it.getType());
+    //   //   out.concat("\":\"");
+    //   //   out.concat(data_it.getValue());
+    //   //   out.concat("\"");
+    //   // }
       out.concat("}");
 
     }
@@ -207,28 +213,34 @@ void Master::registerEndpoints() {
 
 
 
-int Master::DataElement::setData(const char* key, const char* value) {
-    auto it = this->data.begin();
-    for(; it != this->data.end(); ++it) {
-      if (strncmp((*it).getType(), key, TYPE_BUFFER) == 0) break;
+int Master::Node::setData(const char* key, const char* value) {
+  Serial.println("Setting Data...");
+  auto it = this->data.begin();
+  for(; it != this->data.end(); ++it) {
+    if (strncmp((*it).getType(), key, TYPE_BUFFER) == 0) break;
+  }
+  Serial.println("Got node or none");
+
+  // If data is not already in the list then add it
+  if (it == this->data.end()) {
+    if (this->data.full()) {
+      Serial.println("Unable to add new sensor data, array is full.");
+      return 1;
     }
+    this->data.push_back(ManagedSensor{key, value});
+  }
 
-    // If data is not already in the list then add it
-    if (it == this->data.end()) {
-      if (this->data.full()) {
-        Serial.println("Unable to add new sensor data, array is full.");
-        return 1;
-      }
-      this->data.push_back(Sensor{key, value});
-    }
+  Serial.println("Added if empty");
 
-    (*it).setValue(value);
+  (*it).setValue(value);
 
-    return 0;
+  Serial.println("Added data");
+
+  return 0;
 }
 
 
-const Array<Sensor, MAX_SENSORS>& Master::DataElement::getData() const {
+const Array<ManagedSensor, MAX_SENSORS>& Master::Node::getData() const {
   return this->data;
 }
 

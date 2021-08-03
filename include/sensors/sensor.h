@@ -7,13 +7,13 @@
 class Sensor {
 public:
   Sensor();
-  Sensor(const char* type, const char* value);
   const char* getType() const;
-  const char* getValue() const;
-  void setValue(const char* value);
+  virtual const char* getValue() const = 0;
+protected:
+  Sensor(const char* type);
+  char type[TYPE_BUFFER + 1];
+  char value[VALUE_BUFFER + 1];
 private:
-  char* type[TYPE_BUFFER + 1];
-  char* value[VALUE_BUFFER + 1];
 };
 
 #endif

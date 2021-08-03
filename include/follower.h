@@ -11,7 +11,7 @@ public:
   Follower();
   void loop() override;
 private:
-  Array<Sensor, MAX_SENSORS> sensors;
+  Array<Sensor*, MAX_SENSORS> sensors;
 };
 
 #endif

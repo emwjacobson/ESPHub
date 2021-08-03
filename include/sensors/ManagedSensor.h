@@ -16,7 +16,7 @@ public:
     memcpy(this->type, type, len);
   }
 
-  const char* getValue() const {
+  const char* getValue() override {
     return value;
   }
 

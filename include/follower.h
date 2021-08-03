@@ -10,8 +10,10 @@ class Follower : public Controller {
 public:
   Follower();
   void loop() override;
+  void addSensor(Sensor* sensor);
 private:
-  Array<Sensor*, MAX_SENSORS> sensors;
+  Sensor* sensors[MAX_SENSORS];
+  int num_sensors;
 };
 
 #endif

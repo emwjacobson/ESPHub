@@ -227,7 +227,7 @@ int Node::setData(const char* type, const char* value) {
 }
 
 
-const ManagedSensor* Node::getData() const {
+ManagedSensor* Node::getData() {
   return this->data;
 }
 

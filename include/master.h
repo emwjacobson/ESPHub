@@ -21,7 +21,7 @@ public:
   }
   const char* getNodeName() const { return node_name; }
   int setData(const char* key, const char* value);
-  const ManagedSensor* getData() const;
+  ManagedSensor* getData();
   const int& getNumSensors();
 private:
   char node_name[NAME_BUFFER + 1];

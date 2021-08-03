@@ -43,9 +43,7 @@ Follower::Follower(): num_sensors(0) {
     data.concat(s->getType());
     data.concat("&value=");
     data.concat(s->getValue());
-    time_t start_req = micros();
     int response_code = http.POST(data);
-    time_t end_req = micros();
     Serial.print("Sent with response code: ");
     Serial.println(response_code);
     Serial.println(http.getString());

@@ -1,5 +1,5 @@
-#ifndef MASTER_H
-#define MASTER_H
+#ifndef HUB_H
+#define HUB_H
 
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
@@ -31,9 +31,9 @@ private:
 
 
 
-class Master : public Controller {
+class Hub : public Controller {
 public:
-  Master();
+  Hub();
   void loop() override;
 private:
   AsyncWebServer server;

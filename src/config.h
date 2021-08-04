@@ -1,10 +1,15 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "ESP8266WiFi.h"
 
 ///////////////////////////////////////
 //////// General Configuration ////////
 ///////////////////////////////////////
+
+// NODE_NAME is who the node will report it's data as, should be
+// unique between devices if you want seperate entities.
+#define NODE_NAME "Bedroom"
 
 // HUB_SSID is the SSID that the Hub node broadcasts and the Follower nodes connect to.
 #define HUB_SSID "ESPHub"
@@ -12,10 +17,6 @@
 
 // Set HUB_SSID_HIDDEN to 0 to hide SSID from showing up.
 #define HUB_SSID_HIDDEN 0
-
-// NODE_NAME is who the node will report it's data as, should be
-// unique between devices if you want seperate entities.
-#define NODE_NAME "Bedroom"
 
 // The buffer sizes are the maximum length of characters for the
 // node name, type, and value of sensors. Anything longer will be truncated.
@@ -48,6 +49,6 @@
 // Uncomment all of the sensors that you would like to enable on this follower node
 // Make sure that the number of sensors enabled is <= MAX_SENSORS in the 'General Configuration' section.
 #define DHT11_Sensor
-  #define DHT11_PIN 2
+  #define DHT11_PIN D4
 
 #endif

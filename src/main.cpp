@@ -15,7 +15,7 @@
 Controller* controller;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial) {delay(1);}
   Serial.println("Serial Initialized");
 

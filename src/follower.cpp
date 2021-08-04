@@ -60,7 +60,7 @@ Follower::Follower(): num_sensors(0) {
 
 void Follower::loop() {
   // For the follower we don't really expect it to loop, as after
-  // it powers on, it should send results to the master node then
+  // it powers on, it should send results to the hub node then
   // enter deep sleep. Upon waking up it should repeat that.
   Serial.print("YOU SHOULDNT SEE ME!");
   delay(1);

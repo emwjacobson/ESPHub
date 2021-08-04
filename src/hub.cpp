@@ -1,15 +1,15 @@
-#ifndef MASTER_CPP
-#define MASTER_CPP
+#ifndef HUB_CPP
+#define HUB_CPP
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include "master.h"
+#include "hub.h"
 #include "config.h"
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
 #include "sensors/ManagedSensor.h"
 
-Master::Master():
+Hub::Hub():
   server(AsyncWebServer(80))
   {
   WiFi.mode(WIFI_AP_STA);
@@ -36,7 +36,7 @@ Master::Master():
   this->registerEndpoints();
 }
 
-void Master::loop() {
+void Hub::loop() {
   Serial.print("Num connected: "); Serial.println(WiFi.softAPgetStationNum());
   Serial.print("WIFI Status: ");
   switch(WiFi.status()) {
@@ -63,7 +63,7 @@ void Master::loop() {
   delay(5000);
 }
 
-void Master::registerEndpoints() {
+void Hub::registerEndpoints() {
   this->server.on("/data", HTTP_POST, [this](AsyncWebServerRequest* request) {
     int params = request->params();
     for(int i=0;i<params;i++){

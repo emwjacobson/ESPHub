@@ -7,7 +7,7 @@
 #include "config.h"
 
 #if MODE == 1
-#include "master.h"
+#include "hub.h"
 #elif MODE == 2
 #include "follower.h"
 #endif
@@ -24,7 +24,7 @@ void setup() {
   }
 
   #if MODE == 1
-  controller = new Master();
+  controller = new Hub();
   #elif MODE == 2
   controller = new Follower();
   #endif

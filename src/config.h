@@ -11,7 +11,7 @@
 // unique between devices if you want seperate entities.
 #define NODE_NAME "Bedroom"
 
-// HUB_SSID is the SSID that the Master node broadcasts and the Follower nodes connect to.
+// HUB_SSID is the SSID that the Hub node broadcasts and the Follower nodes connect to.
 #define HUB_SSID "ESPHub"
 #define HUB_PASSWD "ESPHubPassword"
 
@@ -29,15 +29,15 @@
 
 
 
-///////////////////////////////////////////
-//////// Master Node Configuration ////////
-///////////////////////////////////////////
+////////////////////////////////////////
+//////// Hub Node Configuration ////////
+////////////////////////////////////////
 
-// EXTERNAL_SSID is the SSID that the Master node will connect to to relay data from the follower nodes.
+// EXTERNAL_SSID is the SSID that the Hub node will connect to to relay data from the follower nodes.
 #define EXTERNAL_SSID ""
 #define EXTERNAL_PASSWD ""
 
-// MAX_NODES is the maximum amount of Follower nodes that will be allowed to connect to the master node.
+// MAX_NODES is the maximum amount of Follower nodes that will be allowed to connect to the hub node.
 #define MAX_NODES 8
 
 

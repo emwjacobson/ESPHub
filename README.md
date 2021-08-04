@@ -4,6 +4,15 @@ The goal of this project is to create a single "Hub" device that "Follower" devi
 
 ![Flowchat](/images/flow.png)
 
+- [ESPHub](#esphub)
+- [Configuration](#configuration)
+  - [General Configuration](#general-configuration)
+  - [Hub Configuration](#hub-configuration)
+  - [Follower Configuration](#follower-configuration)
+- [Home Assistant Setup](#home-assistant-setup)
+
+
+
 # Configuration
 
 Inside of the `src/` folder there is a file called `config.h`. This is the configuration file for the Hub and Follower nodes.
@@ -41,7 +50,7 @@ This is the maximum number of sensors that any one node will report. This item a
 
 On a Hub device, this number dictates how many sensors that each device that reports to it can have. This number is independent per node meaning that if `MAX_SENSORS = 8` and you have `3` Follower Nodes, you can have a maximum of `24` devices if you have all `8` sensors per device.
 
-## Setting up the Hub node
+## Hub Configuration
 
 The Hub node is the main "coordinator" between all of the Follower nodes. It is the one that all of the Followers will report data back to.
 
@@ -61,7 +70,7 @@ This is the maximum number of Follower nodes that you want to be able to report 
 **Note:** Multiple devices registered with the same name *can* technically report as 1 device, meaning you can more than `MAX_NODES` physical devices. The shared-name devices must still have <= `MAX_SENSORS` many sensors combined between them.
 
 
-## Setting up Follower nodes.
+## Follower Configuration
 
 Follower setup should start with giving the node a unique `NODE_NAME` to identify itself.
 
@@ -75,3 +84,42 @@ eg. To enable a DHT11 (Temperature and Humidity Sensor) connected to Pin D4, you
 ```
 
 Be sure to note how many sensor readings your device actually outputs, as a single device can report multiple values (such as the DHT11 device reporting temperature and humidity.)
+
+# Home Assistant Setup
+
+For the sake of this example it will be assumed that the Hub node is located at `192.168.1.100`. The actual address of your Hub node should be statically assigned to prevent it from getting a new IP after a restart and to prevent any other changes.
+
+The following endpoints are used to collect data:
+
+`http://192.168.1.100/collect`
+
+This endpoint has data from all of the connected followers and their sensors.
+
+`http://192.168.1.100/data`
+
+This endpoint has data about the Hub node itself.
+
+The Hub can be connected to Home Assistant through a [RESTful Sensor](https://www.home-assistant.io/integrations/sensor.rest/).
+
+Under the `sensor:` section in Home Assistants `configuration.yaml` file, we can add the following.
+
+```yaml
+- platform: rest
+  name: esphub
+  json_attributes:
+    - num_devices
+    - max_devices
+    - node
+  resource: http://192.168.1.100/collect
+  value_template: "OK"
+- platform: template
+  sensors:
+    esphub_num_devices:
+      value_template: "{{ state_attr('sensor.esphub', 'num_devices') }}"
+      friendly_name: "Num Devices Connected"
+    esphub_max_devices:
+      value_template: "{{ state_attr('sensor.esphub', 'max_devices') }}"
+      friendly_name: "Max Devices Allowed"
+```
+
+This will introduce two new sensors, `sensor.esphub_num_devices` and `sensor.esphub_max_devices`, which can be used to show how many devices have registered themself with the Hub node.

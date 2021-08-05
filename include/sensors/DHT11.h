@@ -10,9 +10,10 @@ public:
   DHT11Sensor(const int& pin) : Sensor("DHT11"), dht(DHT11, pin) {
     this->dht.begin();
   }
-  char* getValue() override {
-    sprintf(this->value, "%f", this->dht.readTemperature(true));
-    return this->value;
+  const char* getValue() override {
+    char value[VALUE_BUFFER + 1];
+    sprintf(value, "%.2f", this->dht.readTemperature(true));
+    return value;
   }
 private:
   DHT dht;

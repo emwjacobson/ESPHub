@@ -50,5 +50,6 @@
 // Make sure that the number of sensors enabled is <= MAX_SENSORS in the 'General Configuration' section.
 #define DHT11_Sensor
   #define DHT11_PIN D4
+  #define DHT11_OFFSET -1
 
 #endif

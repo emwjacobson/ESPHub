@@ -16,7 +16,7 @@ public:
     memcpy(this->type, type, len);
   }
 
-  char* getValue() override {
+  const char* getValue() override {
     return value;
   }
 
@@ -26,6 +26,8 @@ public:
     memcpy(this->value, value, len);
     this->value[len] = 0;
   }
+private:
+  char value[VALUE_BUFFER + 1];
 };
 
 #endif

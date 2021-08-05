@@ -21,8 +21,8 @@
 // The buffer sizes are the maximum length of characters for the
 // node name, type, and value of sensors. Anything longer will be truncated.
 #define NAME_BUFFER 16
-#define TYPE_BUFFER 16
-#define VALUE_BUFFER 8
+#define TYPE_BUFFER 32
+#define VALUE_BUFFER 32
 
 // MAX_SENSORS is the maximum amount of sensors that any one follower node can have.
 #define MAX_SENSORS 8
@@ -50,6 +50,6 @@
 // Make sure that the number of sensors enabled is <= MAX_SENSORS in the 'General Configuration' section.
 #define DHT11_Sensor
   #define DHT11_PIN D4
-  #define DHT11_OFFSET -1
+  #define DHT11_TEMP_OFFSET -1
 
 #endif

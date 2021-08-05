@@ -6,8 +6,8 @@
 class ManagedSensor : public Sensor {
 public:
   ManagedSensor() {
-    // memset(this->type, 0, (TYPE_BUFFER + 1) * sizeof(char*));
-    // memset(this->value, 0, (VALUE_BUFFER + 1) * sizeof(char*));
+    memset(this->type, 0, (TYPE_BUFFER + 1) * sizeof(char*));
+    memset(this->value, 0, (VALUE_BUFFER + 1) * sizeof(char*));
   }
 
   void setType(const char* type) {
@@ -28,7 +28,6 @@ public:
   }
 
 private:
-  char value[VALUE_BUFFER + 1];
 };
 
 #endif

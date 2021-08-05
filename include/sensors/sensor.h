@@ -12,6 +12,7 @@ public:
 protected:
   Sensor(const char* type);
   char type[TYPE_BUFFER + 1];
+  char value[VALUE_BUFFER + 1];
 private:
 };
 

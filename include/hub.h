@@ -11,7 +11,7 @@
 
 class Node {
 public:
-  Node() {
+  Node(): num_sensors(0) {
     this->node_name[0] = 0;
   }
   void setNodeName(const char* name) {

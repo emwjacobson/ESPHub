@@ -192,6 +192,10 @@ void Hub::registerEndpoints() {
     request->send(200, "application/json", out);
   });
 
+  this->server.onNotFound([](AsyncWebServerRequest *request){
+    request->send(404);
+  });
+
   this->server.begin();
   Serial.println("API Endpoints Registered.");
 }

@@ -7,11 +7,11 @@
 
 class DHT11Sensor : public Sensor {
 public:
-  DHT11Sensor(const int& pin) : Sensor("temperature"), dht(DHT11, pin) {
+  DHT11Sensor(const int& pin) : Sensor("temperature"), dht(pin, DHT11) {
     this->dht.begin();
   }
   const char* getValue() override {
-    snprintf(this->value, VALUE_BUFFER, "%.2f", this->dht.readTemperature(true, true) + DHT11_TEMP_OFFSET);
+    snprintf(this->value, VALUE_BUFFER, "%4.2f", this->dht.readTemperature(true, true));
     return this->value;
   }
 private:

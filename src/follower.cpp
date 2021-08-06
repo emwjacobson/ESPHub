@@ -18,32 +18,38 @@ Follower::Follower(): num_sensors(0) {
   Serial.print("Attempting connection to '" HUB_SSID "'");
   this->connectToAP(HUB_SSID, HUB_PASSWD);
 
+  // The connection is delayed so we can run sensor collection while it's connecting
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println("\nConnected!");
+
   #ifdef DHT11_Sensor
   this->addSensor(new DHT11Sensor(DHT11_PIN));
   #endif
 
-  // The connection is delayed so we can run sensor collection while it's connecting
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(200);
-  }
-  Serial.println("");
-
   WiFiClient wifi_client;
   HTTPClient http;
+
   // TODO: Return this to original IP address.
-  http.begin(wifi_client, "https://d89369fb-8a3f-4325-95b7-8580a84fe800.mock.pstmn.io/data");
-  // http.begin(wifi_client, "http://10.1.0.1/data");
+  // http.begin(wifi_client, "https://d89369fb-8a3f-4325-95b7-8580a84fe800.mock.pstmn.io/data");
+  http.begin(wifi_client, "http://10.1.0.1/data");
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-  for (Sensor* s : this->sensors) {
-    String data;
+  for (int i=0; i < this->num_sensors; i++) {
+    String data((char*)NULL);
+    data.reserve(1024);
     data.concat("name=" NODE_NAME);
     data.concat("&type=");
-    data.concat(s->getType());
+    data.concat(this->sensors[i]->getType());
     data.concat("&value=");
-    data.concat(s->getValue());
+    Serial.println(this->sensors[i]->getType());
+    Serial.println(this->sensors[i]->getValue());
+    data.concat(this->sensors[i]->getValue());
+    Serial.println("Prereq");
     int response_code = http.POST(data);
+    Serial.println("Postreq");
     Serial.print("Sent with response code: ");
     Serial.println(response_code);
     Serial.println(http.getString());

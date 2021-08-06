@@ -49,7 +49,7 @@
 // Uncomment all of the sensors that you would like to enable on this follower node
 // Make sure that the number of sensors enabled is <= MAX_SENSORS in the 'General Configuration' section.
 #define DHT11_Sensor
-  #define DHT11_PIN D4
+  #define DHT11_PIN D2
   #define DHT11_TEMP_OFFSET -1
 
 #endif

@@ -7,12 +7,12 @@
 class Sensor {
 public:
   Sensor();
-  const char* getType() const;
+  // const char* getType() const;
   virtual const char* getValue() = 0;
 protected:
-  Sensor(const char* type);
-  char type[TYPE_BUFFER + 1];
-  char value[VALUE_BUFFER + 1];
+  // Sensor(const char* type);
+  // char type[TYPE_BUFFER + 1];
+  // char value[VALUE_BUFFER + 1];
 private:
 };
 

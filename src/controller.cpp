@@ -6,10 +6,8 @@
 #include "controller.h"
 #include "config.h"
 
-int8_t Controller::connectToAP(const char* SSID, const char* passwd) {
+void Controller::connectToAP(const char* SSID, const char* passwd) {
   WiFi.begin(SSID, passwd);
-
-  return WiFi.waitForConnectResult(60);
 }
 
 bool Controller::setupSoftAP(const char* SSID, const char* passwd) {

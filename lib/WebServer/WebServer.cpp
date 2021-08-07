@@ -5,7 +5,11 @@
 #include <ESP8266WiFi.h>
 #include "WebServer.h"
 
-WebServer::WebServer() : server(80) {}
+WebServer::WebServer() : server(80), num_endpoints(0) {}
+
+void WebServer::begin() {
+  this->server.begin();
+}
 
 void WebServer::handleClients() {
   WiFiClient client = this->server.available();
@@ -19,8 +23,16 @@ void WebServer::handleClients() {
   }
 }
 
-void WebServer::begin() {
-  this->server.begin();
+bool WebServer::registerEndpoint(const char* endpoint, const HTTP_METHOD& method, CallbackFunction&& onCalled) {
+  if (this->num_endpoints == NUM_CALLBACKS) {
+    return false;
+  }
+
+  strncpy(this->endpoints_callbacks[num_endpoints].first, endpoint, CALLBACK_BUFFER);
+  this->endpoints_callbacks[num_endpoints].second = std::move(std::pair<HTTP_METHOD, CallbackFunction>{method, std::move(onCalled)});
+
+  this->num_endpoints++;
+  return true;
 }
 
 void WebServer::handleClient(WiFiClient& client) {
@@ -106,16 +118,26 @@ void WebServer::handleClient(WiFiClient& client) {
   }
 
   // Body Parsing
-  if (method == GET) {
-    // Body should be discarded for GET requests
-    client.peekConsume(body_size);
-  } else if (method == POST) {
+  if (method == POST) {
     client.readBytes(body_buffer, body_size);
     Serial.println(body_buffer);
   }
 
+  this->handleEndpoints(endpoint, method, body_buffer, body_size, client);
+
   delete[] body_buffer;
   client.stop();
+}
+
+void WebServer::handleEndpoints(const char* endpoint, const HTTP_METHOD& method, const char* body_buffer, const int& body_size, WiFiClient& client) {
+  for (int i = 0; i<this->num_endpoints; i++) {
+    if (strncmp(this->endpoints_callbacks[i].first, endpoint, CALLBACK_BUFFER) == 0) {
+      if (this->endpoints_callbacks[i].second.first == method) {
+        (this->endpoints_callbacks[i].second.second)(std::move(Request(client)));
+        break;
+      }
+    }
+  }
 }
 
 #endif

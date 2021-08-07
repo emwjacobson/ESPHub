@@ -24,6 +24,12 @@ Hub::Hub() {
 
   Serial.println("Starting server...");
   this->http.begin();
+
+  this->http.registerEndpoint("/data", HTTP_METHOD::POST, [](Request req) {
+    Serial.println("Called Data!");
+    req.send();
+  });
+
 }
 
 void Hub::loop() {

@@ -13,12 +13,34 @@ enum HTTP_METHOD {
 class Request {
 public:
   Request(WiFiClient client): client(client) {}
-  void send() {
-    Serial.println("204ing...");
-    this->client.write("HTTP/1.1 204 No Content\n\n");
+  void send(const int& code, const char* body) {
+    const int buffer_size = 300;
+    char buffer[buffer_size + 1];
+    buffer[buffer_size] = 0;
+
+    // Start Line
+    snprintf(buffer, buffer_size, "HTTP/1.1 %i %s", code, this->getResponseCode(code));
+    this->client.println(buffer);
+
+    // Headers
+    snprintf(buffer, buffer_size, "Connection: close");
+    this->client.println(buffer);
+
+    if (body != nullptr) {
+      snprintf(buffer, buffer_size, "Content-Length: %i", strlen(body));
+    }
+
+    this->client.write("\n"); // Header-to-body seperator
+
+    // Body
+    if (body != nullptr) {
+      this->client.write(body, strlen(body)); // Don't append a newline
+    }
   }
 private:
   WiFiClient client;
+
+  const char* getResponseCode(const int& code);
 };
 
 class WebServer {
@@ -37,6 +59,7 @@ private:
 
   void handleClient(WiFiClient& client);
   void handleEndpoints(const char* endpoint, const HTTP_METHOD& method, const char* body_buffer, const int& body_size, WiFiClient& client);
+  const char* getResponseCode(const int& code);
 };
 
 #endif

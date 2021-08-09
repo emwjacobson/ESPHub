@@ -139,7 +139,7 @@ void WebServer::handleEndpoints(const char* endpoint, const HTTP_METHOD& method,
     }
   }
   Serial.println("No endpoint matched, fallback to 404?");
-  Request(client).send(404, nullptr);
+  Request(client).send(404, nullptr, 0);
 }
 
 

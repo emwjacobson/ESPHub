@@ -40,7 +40,7 @@ void WebServer::handleClient(WiFiClient& client) {
     // Serial.print((char)client.read());
   // }
 
-  // POST /endpoint HTTP/1.1\r\n
+  // POST /endpoint?key1=value1&key2=value2 HTTP/1.1\r\n
   // User-Agent: PostmanRuntime/7.28.2\r\n
   // Accept: */*\r\n
   // Host: 192.168.1.23\r\n
@@ -51,34 +51,54 @@ void WebServer::handleClient(WiFiClient& client) {
   // \r\n
   // key=value&key2=value2
 
-  int n;
+  size_t n;
   char* body_buffer = nullptr;
   int body_size = 0;
   HTTP_METHOD method;
 
   // Read the HTTP method. GET, POST, etc.
-  char m_buffer[9];
-  n = client.readBytesUntil(' ', m_buffer, 8);
-  m_buffer[n] = 0;
-  Serial.println(m_buffer);
+  char method_buffer[9];
+  n = client.readBytesUntil(' ', method_buffer, 8);
+  method_buffer[n] = 0;
+  Serial.println(method_buffer);
 
-  if (strcmp(m_buffer, "GET") == 0) {
+  if (strcmp(method_buffer, "GET") == 0) {
     method = GET;
-  } else if (strcmp(m_buffer, "POST") == 0) {
+  } else if (strcmp(method_buffer, "POST") == 0) {
     method = POST;
   } else {
     method = UNIMPLEMENTED;
   }
 
-  // Read endpoint
-  char endpoint[33]; endpoint[32] = 0;
-  n = client.readBytesUntil(' ', endpoint, 32);
-  endpoint[n] = 0;
-  Serial.print("Endpoint: ");
-  Serial.println(endpoint);
 
-  while ((char)client.peek() != '\n') Serial.print((char)client.read());
-  // while ((char)client.read() != '\n') delay(1); // Discard rest of line
+
+
+  // Read endpoint
+  // `full_endpoint` includes any parameters, eg "/data?somekey=somevalue&otherkey=othervalue"
+  // `endpoint` contains just the endpoint, eg "/data"
+  // `parameters` contains just the parameters, eg "somekey=somevalue&otherkey=othervalue"
+  char full_endpoint[ENDPOINT_BUFFER + PARAMS_BUFFER + 1]; full_endpoint[ENDPOINT_BUFFER + PARAMS_BUFFER] = 0;
+  n = client.readBytesUntil(' ', full_endpoint, ENDPOINT_BUFFER + PARAMS_BUFFER);
+  full_endpoint[n] = 0;
+  Serial.print("Endpoint: ");
+  Serial.println(full_endpoint);
+
+  char endpoint[ENDPOINT_BUFFER + 1]; endpoint[ENDPOINT_BUFFER] = 0;
+  char params[PARAMS_BUFFER + 1]; params[PARAMS_BUFFER] = 0;
+  n = strcspn(full_endpoint, "?");
+  strncpy(endpoint, full_endpoint, n);
+  endpoint[n] = 0;
+  if (n != strlen(full_endpoint)) { // If there is no '?', then n should == len(full_endpoint)
+    strcpy(params, full_endpoint + n + 1);
+  }
+
+
+
+  // while ((char)client.peek() != '\n') Serial.print((char)client.read());
+  while ((char)client.read() != '\n') delay(1); // Discard rest of line ( HTTP/1.1 )
+
+
+
 
   // Header Parsing
   char header_key[65]; header_key[64] = 0;
@@ -99,7 +119,7 @@ void WebServer::handleClient(WiFiClient& client) {
       int length = atoi(header_value);
       body_buffer = new char[length + 1];
       body_buffer[length] = 0;
-      body_size = atoi(header_value);
+      body_size = length;
     }
 
     Serial.print(header_key);
@@ -120,26 +140,31 @@ void WebServer::handleClient(WiFiClient& client) {
   // Body Parsing
   if (method == POST) {
     client.readBytes(body_buffer, body_size);
-    Serial.println(body_buffer);
   }
 
-  this->handleEndpoints(endpoint, method, body_buffer, body_size, client);
+  this->handleEndpoints(endpoint, method, params, strlen(params), body_buffer, body_size, client);
 
   delete[] body_buffer;
   client.stop();
 }
 
-void WebServer::handleEndpoints(const char* endpoint, const HTTP_METHOD& method, const char* body_buffer, const int& body_size, WiFiClient& client) {
+void WebServer::handleEndpoints(const char* endpoint,
+                                const HTTP_METHOD& method,
+                                const char* params,
+                                const int& params_size,
+                                const char* body,
+                                const int& body_size,
+                                WiFiClient& client) {
   for (int i = 0; i<this->num_endpoints; i++) {
     if (strncmp(this->endpoints_callbacks[i].first, endpoint, CALLBACK_BUFFER) == 0) {
       if (this->endpoints_callbacks[i].second.first == method) {
-        (this->endpoints_callbacks[i].second.second)(std::move(Request(client)));
+        (this->endpoints_callbacks[i].second.second)(std::move(Request(client, params, params_size, body, body_size)));
         return;
       }
     }
   }
   Serial.println("No endpoint matched, fallback to 404?");
-  Request(client).send(404);
+  Request(client, nullptr, 0, nullptr, 0).send(404);
 }
 
 

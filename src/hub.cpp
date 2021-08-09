@@ -26,6 +26,8 @@ Hub::Hub() {
   this->http.begin();
 
   this->http.registerEndpoint("/data", HTTP_METHOD::POST, [](Request req) {
+    Serial.println(req.getParams());
+    Serial.println(req.getBody());
     Serial.println("Called Data!");
     req.send(200);
   });

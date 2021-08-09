@@ -4,6 +4,9 @@
 #define CALLBACK_BUFFER 16
 #define NUM_CALLBACKS 10
 
+#define ENDPOINT_BUFFER 16
+#define PARAMS_BUFFER 64
+
 enum HTTP_METHOD {
   GET = 0,
   POST,
@@ -12,7 +15,14 @@ enum HTTP_METHOD {
 
 class Request {
 public:
-  Request(WiFiClient client): client(client) {}
+  Request(WiFiClient client,
+          const char* params,
+          const int& params_size,
+          const char* body,
+          const int& body_size): client(client) {
+    this->params = params;
+    this->body = body;
+  }
   void send(const int& code) {
     this->send(code, nullptr, 0);
   }
@@ -40,8 +50,13 @@ public:
       this->client.write(body, body_size); // Don't append a newline
     }
   }
+  const char* getParams() const { return this->params; }
+  const char* getBody() const { return this->body; }
 private:
   WiFiClient client;
+  const char* params;
+  const char* body;
+
 
   const char* getResponseCode(const int& code);
 };
@@ -65,7 +80,8 @@ private:
   int num_endpoints;
 
   void handleClient(WiFiClient& client);
-  void handleEndpoints(const char* endpoint, const HTTP_METHOD& method, const char* body_buffer, const int& body_size, WiFiClient& client);
+  void handleEndpoints(const char* endpoint, const HTTP_METHOD& method, const char* params,
+            const int& params_size, const char* body, const int& body_size, WiFiClient& client);
   const char* getResponseCode(const int& code);
 };
 

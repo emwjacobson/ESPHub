@@ -13,7 +13,7 @@ enum HTTP_METHOD {
 class Request {
 public:
   Request(WiFiClient client): client(client) {}
-  void send(const int& code, const char* body) {
+  void send(const int& code, const char* body, const int& body_size) {
     const int buffer_size = 300;
     char buffer[buffer_size + 1];
     buffer[buffer_size] = 0;
@@ -27,14 +27,14 @@ public:
     this->client.println(buffer);
 
     if (body != nullptr) {
-      snprintf(buffer, buffer_size, "Content-Length: %i", strlen(body));
+      snprintf(buffer, buffer_size, "Content-Length: %i", body_size);
     }
 
     this->client.write("\n"); // Header-to-body seperator
 
     // Body
     if (body != nullptr) {
-      this->client.write(body, strlen(body)); // Don't append a newline
+      this->client.write(body, body_size); // Don't append a newline
     }
   }
 private:
@@ -42,6 +42,10 @@ private:
 
   const char* getResponseCode(const int& code);
 };
+
+
+
+
 
 class WebServer {
 public:

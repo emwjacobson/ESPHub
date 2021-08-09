@@ -13,6 +13,9 @@ enum HTTP_METHOD {
 class Request {
 public:
   Request(WiFiClient client): client(client) {}
+  void send(const int& code) {
+    this->send(code, nullptr, 0);
+  }
   void send(const int& code, const char* body, const int& body_size) {
     const int buffer_size = 300;
     char buffer[buffer_size + 1];

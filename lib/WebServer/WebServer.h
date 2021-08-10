@@ -20,10 +20,10 @@ public:
           const int& params_size,
           const char* body,
           const int& body_size)
-          : client(client),
-            req_param_size(params_size),
-            req_body_size(body_size),
-            m_isSent(false)
+  : client(client),
+    req_param_size(params_size),
+    req_body_size(body_size),
+    m_isSent(false)
   {
     this->params = params;
     this->body = body;

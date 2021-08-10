@@ -10,7 +10,6 @@ class Hub : public Controller {
 public:
   Hub();
   void loop() override;
-  void handleClient(WiFiClient& client);
 private:
   WebServer http;
 };

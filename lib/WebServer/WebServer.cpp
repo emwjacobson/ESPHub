@@ -158,7 +158,11 @@ void WebServer::handleEndpoints(const char* endpoint,
   for (int i = 0; i<this->num_endpoints; i++) {
     if (strncmp(this->endpoints_callbacks[i].first, endpoint, CALLBACK_BUFFER) == 0) {
       if (this->endpoints_callbacks[i].second.first == method) {
-        (this->endpoints_callbacks[i].second.second)(std::move(Request(client, params, params_size, body, body_size)));
+        Request req(client, params, params_size, body, body_size);
+        (this->endpoints_callbacks[i].second.second)(req);
+        if (!(req.isSent())) {
+          req.send(500);
+        }
         return;
       }
     }

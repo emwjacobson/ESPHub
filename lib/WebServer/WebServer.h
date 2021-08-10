@@ -19,13 +19,15 @@ public:
           const char* params,
           const int& params_size,
           const char* body,
-          const int& body_size): client(client) {
+          const int& body_size): client(client), isSent(false) {
     this->params = params;
     this->body = body;
   }
+
   void send(const int& code) {
     this->send(code, nullptr, 0);
   }
+
   void send(const int& code, const char* body, const int& body_size) {
     const int buffer_size = 300;
     char buffer[buffer_size + 1];
@@ -49,13 +51,23 @@ public:
     if (body != nullptr) {
       this->client.write(body, body_size); // Don't append a newline
     }
+
+    this->isSent = true;
   }
+
+  // Gets the raw parameter string, eg `key1=value1&key2=value2`
   const char* getParams() const { return this->params; }
+
+  // Gets the raw body string, eg `somekey=somevalue&otherkey=othervalue`
   const char* getBody() const { return this->body; }
+
+  // Determines if the request has been sent
+  const bool& isSent() const { return this->m_isSent; }
 private:
   WiFiClient client;
   const char* params;
   const char* body;
+  bool m_isSent;
 
 
   const char* getResponseCode(const int& code);

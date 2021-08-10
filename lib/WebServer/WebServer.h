@@ -79,7 +79,7 @@ private:
 
 class WebServer {
 public:
-  typedef std::function<void(const Request&)> CallbackFunction;
+  typedef std::function<void(Request&)> CallbackFunction;
 
   WebServer();
   void begin();

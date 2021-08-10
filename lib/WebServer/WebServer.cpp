@@ -139,8 +139,13 @@ void WebServer::handleClient(WiFiClient& client) {
 
   // Body Parsing
   if (method == POST) {
-    client.readBytes(body_buffer, body_size);
+    n = client.readBytes(body_buffer, body_size);
+    body_buffer[n] = 0;
   }
+
+  n = client.available();
+  if (n > 0)
+    client.peekConsume(n);
 
   this->handleEndpoints(endpoint, method, params, strlen(params), body_buffer, body_size, client);
 

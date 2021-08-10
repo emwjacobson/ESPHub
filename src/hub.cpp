@@ -26,17 +26,20 @@ Hub::Hub() {
   this->http.begin();
 
   // Used to push data to the Hub node
-  this->http.registerEndpoint("/data", HTTP_METHOD::POST, [](Request req) {
+  this->http.registerEndpoint("/data", HTTP_METHOD::POST, [](Request& req) {
     Serial.println(req.getParams());
     Serial.println(req.getBody());
     Serial.println("Called Data!");
     req.send(200);
   });
 
-  this->http.registerEndpoint("/collect", HTTP_METHOD::GET, [](Request req) {
-    req.send(200);
+  this->http.registerEndpoint("/collect", HTTP_METHOD::GET, [](Request& req) {
+    req.send(501);
   });
 
+  this->http.registerEndpoint("/info", HTTP_METHOD::GET, [](Request& req) {
+    req.send(501);
+  });
 }
 
 void Hub::loop() {

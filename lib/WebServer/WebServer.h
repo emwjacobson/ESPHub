@@ -19,7 +19,7 @@ public:
           const char* params,
           const int& params_size,
           const char* body,
-          const int& body_size): client(client), isSent(false) {
+          const int& body_size): client(client), m_isSent(false) {
     this->params = params;
     this->body = body;
   }
@@ -52,7 +52,7 @@ public:
       this->client.write(body, body_size); // Don't append a newline
     }
 
-    this->isSent = true;
+    this->m_isSent = true;
   }
 
   // Gets the raw parameter string, eg `key1=value1&key2=value2`

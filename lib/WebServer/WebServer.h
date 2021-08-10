@@ -19,7 +19,12 @@ public:
           const char* params,
           const int& params_size,
           const char* body,
-          const int& body_size): client(client), m_isSent(false) {
+          const int& body_size)
+          : client(client),
+            req_param_size(params_size),
+            req_body_size(body_size),
+            m_isSent(false)
+  {
     this->params = params;
     this->body = body;
   }
@@ -58,15 +63,21 @@ public:
   // Gets the raw parameter string, eg `key1=value1&key2=value2`
   const char* getParams() const { return this->params; }
 
+  const int& getParamSize() const { return this->req_param_size; }
+
   // Gets the raw body string, eg `somekey=somevalue&otherkey=othervalue`
   const char* getBody() const { return this->body; }
+
+  const int& getBodySize() const { return this->req_body_size; }
 
   // Determines if the request has been sent
   const bool& isSent() const { return this->m_isSent; }
 private:
   WiFiClient client;
   const char* params;
+  int req_param_size;
   const char* body;
+  int req_body_size;
   bool m_isSent;
 
 

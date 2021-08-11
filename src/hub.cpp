@@ -6,7 +6,7 @@
 #include <ArduinoJson.h>
 #include "hub.h"
 #include "config.h"
-#include "sensors/sensor.h"
+#include "sensors/ManagedSensor.h"
 
 Hub::Hub() {
   WiFi.mode(WIFI_AP_STA);

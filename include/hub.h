@@ -7,7 +7,7 @@
 #include <cstring>
 #include "config.h"
 #include "controller.h"
-#include "sensors/sensor.h"
+#include "sensors/ManagedSensor.h"
 
 class Node {
 public:

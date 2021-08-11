@@ -16,12 +16,12 @@ public:
     this->name[32] = 0;
   }
   const char* getName() const { return this->name; }
-  const std::vector<Sensor>& getSensors() const { return this->sensors; }
-  Sensor& sensorAt(const int& i) { return this->sensors.at(i); }
-  void addSensor(const char* type) { this->sensors.push_back(std::move(Sensor(type))); }
+  const std::vector<ManagedSensor>& getSensors() const { return this->sensors; }
+  ManagedSensor& sensorAt(const int& i) { return this->sensors.at(i); }
+  void addSensor(const char* type) { this->sensors.push_back(std::move(ManagedSensor(type))); }
 private:
   char name[33];
-  std::vector<Sensor> sensors;
+  std::vector<ManagedSensor> sensors;
 };
 
 

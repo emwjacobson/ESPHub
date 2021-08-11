@@ -143,7 +143,7 @@ void WebServer::handleClient(WiFiClient& client) {
     body_buffer[n] = 0;
   }
 
-  n = client.available();
+  n = client.available(); // If there is data after reading the body, discard the rest
   if (n > 0)
     client.peekConsume(n);
 

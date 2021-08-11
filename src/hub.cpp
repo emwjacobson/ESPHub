@@ -56,6 +56,11 @@ Hub::Hub() {
       return;
     }
 
+    if (doc["name"] == nullptr) {
+      req.send(400);
+      return;
+    }
+
     if (doc["sensors"].size() <= 0) {
       Serial.println("Sensors is empty, don't do anything");
       req.send(304);
@@ -81,7 +86,12 @@ Hub::Hub() {
     size_t sensor_index;
     bool sensor_found = false;
     Node& n = this->nodeAt(node_index);
-    for (JsonObject s : doc["sensors"].as<JsonArray>()) {
+    for (const JsonObject& s : doc["sensors"].as<JsonArray>()) {
+      if (s["type"] == nullptr || s["value"] == nullptr) {
+        req.send(400);
+        return;
+      }
+
       for (sensor_index = 0; sensor_index < n.getSensors().size(); sensor_index++) {
         if (n.sensorAt(sensor_index).getType() == s["type"]) {
           Serial.println("Sensor Matched!");
@@ -102,7 +112,7 @@ Hub::Hub() {
   });
 
   // Used to collect data from the Hub node
-  this->http.registerEndpoint("/collect", HTTP_METHOD::GET, [](Request& req) {
+  this->http.registerEndpoint("/collect", HTTP_METHOD::GET, [this](Request& req) {
     // Returns a JSON object in this form:
     // {
     //   "nodes": {
@@ -119,7 +129,31 @@ Hub::Hub() {
     //     }
     //   }
     // }
-    req.send(501);
+
+    // Calculate how much space is needed for the JSON Document
+
+    int num_nodes = this->getNodes().size();
+    int num_sensors = 0;
+    for (const Node& n : this->getNodes()) {
+      num_sensors += n.getSensors().size();
+    }
+
+    size_t doc_size = JSON_OBJECT_SIZE(num_nodes + num_sensors + 1);
+    DynamicJsonDocument doc(doc_size);
+
+    JsonObject nodes = doc.createNestedObject("nodes");
+
+    for (const Node& n : this->getNodes()) {
+      JsonObject node = nodes.createNestedObject(n.getName());
+      for (const Sensor& s : n.getSensors()) {
+        node[s.getType()] = s.getValue();
+      }
+    }
+
+    size_t json_size = measureJson(doc);
+    char buffer[json_size];
+    serializeJson(doc, buffer, json_size);
+    req.send(200, buffer, json_size);
   });
 
   // Used to get information on the hub node itself

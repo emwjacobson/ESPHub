@@ -138,7 +138,7 @@ Hub::Hub() {
       num_sensors += n.getSensors().size();
     }
 
-    size_t doc_size = JSON_OBJECT_SIZE(num_nodes + num_sensors + 1);
+    const size_t doc_size = JSON_OBJECT_SIZE(num_nodes + num_sensors + 1);
     DynamicJsonDocument doc(doc_size);
 
     JsonObject nodes = doc.createNestedObject("nodes");
@@ -157,8 +157,26 @@ Hub::Hub() {
   });
 
   // Used to get information on the hub node itself
-  this->http.registerEndpoint("/info", HTTP_METHOD::GET, [](Request& req) {
-    req.send(501);
+  this->http.registerEndpoint("/info", HTTP_METHOD::GET, [this](Request& req) {
+    // Response will be in this form:
+    // {
+    //   "Num Nodes": ##,
+    //   "Free Heap": ##,
+    //   "Heap Fragmentation": ##
+    // }
+
+    const size_t doc_size = JSON_OBJECT_SIZE(4); // The main element + 2 elements
+    DynamicJsonDocument doc(doc_size);
+
+    doc["Num Nodes"] = this->getNodes().size();
+    doc["Free Heap"] = ESP.getFreeHeap();
+    doc["Heap Fragmentation"] = ESP.getHeapFragmentation();
+
+    size_t json_size = measureJson(doc);
+    char buffer[json_size];
+    serializeJson(doc, buffer, json_size);
+
+    req.send(200, buffer, json_size);
   });
 }
 

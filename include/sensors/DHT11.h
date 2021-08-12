@@ -6,6 +6,10 @@
 #include <cstring>
 #include "MultiSensor.h"
 
+#ifndef DHT11_READ_FAHRENHEIT
+#define DHT11_READ_FAHRENHEIT false
+#endif
+
 class DHT11Sensor : public MultiSensor {
 public:
   DHT11Sensor(int pin) : MultiSensor(2), dht(pin, DHT11) {

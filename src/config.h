@@ -13,7 +13,7 @@
 
 // HUB_SSID is the SSID that the Hub node broadcasts and the Follower nodes connect to.
 #define HUB_SSID "ESPHub"
-#define HUB_PASSWD "ESPHubPassword"
+#define HUB_PASSWD "ChangeMe!"
 
 // Set HUB_SSID_HIDDEN to 0 to hide SSID from showing up.
 #define HUB_SSID_HIDDEN 0
@@ -35,10 +35,9 @@
 /////////////////////////////////////////////
 
 // Uncomment all of the sensors that you would like to enable on this follower node
-// Make sure that the number of sensors enabled is <= MAX_SENSORS in the 'General Configuration' section.
-#define DHT11_Sensor
+
+#define DHT11_Sensor // Temperature and Humidity sensor
   #define DHT11_PIN D2
-  #define DHT11_TEMP_OFFSET -1
   #define DHT11_READ_FAHRENHEIT true
 
 #endif

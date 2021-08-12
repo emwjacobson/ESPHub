@@ -29,26 +29,10 @@ Names are case sensitive, so `Bedroom` and `bedroom` will show up as 2 seperate 
 
 ```C++
 #define HUB_SSID "ESPHub"
-#define HUB_PASSWD "ESPHubPassword"
+#define HUB_PASSWD "ChangeMe!"
 #define HUB_SSID_HIDDEN 0
 ```
 `HUB_SSID` and `HUB_PASSWORD` is the SSID and Password that you want the Hub to setup for the followers. Optionally this SSID can be hidden if you set `HUB_SSID_HIDDEN` to `1`. This should be a unique network, different than any home network you have.
-
-```C++
-#define NAME_BUFFER 16
-#define TYPE_BUFFER 16
-#define VALUE_BUFFER 8
-```
-These `_BUFFER` variables represent the size of the buffer allocated for each node's `NAME`, and each sensors `TYPE` and `VALUE`. Realistically these numbers shouldnt need to be changed unless you know what you're doing.
-
-One thing to note, if you name a Follower node something with length > `NAME_BUFFER`, it will be truncataed to `NAME_BUFFER` length.
-
-```C++
-#define MAX_SENSORS 8
-```
-This is the maximum number of sensors that any one node will report. This item applies to both the Hub and the Follower.
-
-On a Hub device, this number dictates how many sensors that each device that reports to it can have. This number is independent per node meaning that if `MAX_SENSORS = 8` and you have `3` Follower Nodes, you can have a maximum of `24` devices if you have all `8` sensors per device.
 
 ## Hub Configuration
 
@@ -61,15 +45,6 @@ The Hub node is the main "coordinator" between all of the Follower nodes. It is 
 
 These options set the SSID and Password for the Access Point you want this device to be a part of, typically your home network.
 
-```C++
-#define MAX_NODES 8
-```
-
-This is the maximum number of Follower nodes that you want to be able to report back to you. If `MAX_NODES = 8`, the up to 8 Followers can report their data to you.
-
-**Note:** Multiple devices registered with the same name *can* technically report as 1 device, meaning you can more than `MAX_NODES` physical devices. The shared-name devices must still have <= `MAX_SENSORS` many sensors combined between them.
-
-
 ## Follower Configuration
 
 Follower setup should start with giving the node a unique `NODE_NAME` to identify itself.
@@ -80,7 +55,8 @@ eg. To enable a DHT11 (Temperature and Humidity Sensor) connected to Pin D4, you
 
 ```C++
 #define DHT11_Sensor
-  #define DHT11_PIN D4
+  #define DHT11_PIN D2
+  #define DHT11_READ_FAHRENHEIT true
 ```
 
 Be sure to note how many sensor readings your device actually outputs, as a single device can report multiple values (such as the DHT11 device reporting temperature and humidity.)
@@ -89,37 +65,59 @@ Be sure to note how many sensor readings your device actually outputs, as a sing
 
 For the sake of this example it will be assumed that the Hub node is located at `192.168.1.100`. The actual address of your Hub node should be statically assigned to prevent it from getting a new IP after a restart and to prevent any other changes.
 
-The following endpoints are used to collect data:
+The `/collect` endpoint has data from all of the connected followers and their sensors.
 
-`http://192.168.1.100/collect`
-
-This endpoint has data from all of the connected followers and their sensors.
-
-`http://192.168.1.100/data`
-
-This endpoint has data about the Hub node itself.
+The `/info` endpoint has data about the Hub node itself.
 
 The Hub can be connected to Home Assistant through a [RESTful Sensor](https://www.home-assistant.io/integrations/sensor.rest/).
 
-Under the `sensor:` section in Home Assistants `configuration.yaml` file, we can add the following.
+The following example is how you can import data from the `/info` endpoint into Home Assistant. The following will need to placed under the `sensor:` header in the `configuration.yaml` file.
 
 ```yaml
 - platform: rest
-  name: esphub
+  name: esphub_stats
   json_attributes:
-    - num_devices
-    - max_devices
-    - node
-  resource: http://192.168.1.100/collect
+    - Free Heap
+    - Heap Fragmentation
+    - Num Nodes
+  resource: http://192.168.1.100/info
   value_template: "OK"
 - platform: template
   sensors:
-    esphub_num_devices:
-      value_template: "{{ state_attr('sensor.esphub', 'num_devices') }}"
-      friendly_name: "Num Devices Connected"
-    esphub_max_devices:
-      value_template: "{{ state_attr('sensor.esphub', 'max_devices') }}"
-      friendly_name: "Max Devices Allowed"
+    esphub_info_heap_free:
+      value_template: "{{ state_attr('sensor.esphub_stats', 'Free Heap')|int }}"
+      friendly_name: "Heap Free"
+      unit_of_measurement: "Bytes"
+    esphub_info_heap_fragmentation:
+      value_template: "{{ state_attr('sensor.esphub_stats', 'Heap Fragmentation')|int }}"
+      friendly_name: "Heap Fragmentation"
+      unit_of_measurement: "%"
+    esphub_info_num_nodes:
+      value_template: "{{ state_attr('sensor.esphub_stats', 'Num Nodes')|int }}"
+      friendly_name: "Number of Nodes"
 ```
 
-This will introduce two new sensors, `sensor.esphub_num_devices` and `sensor.esphub_max_devices`, which can be used to show how many devices have registered themself with the Hub node.
+This will introduce three new sensors, `sensor.esphub_info_heap_free`, `sensor.esphub_info_heap_fragmentation`, and `sensor.esphub_info_num_nodes`.
+
+The following example shows how you can import data from the `/collect` endpoint into Home Assistant. Again this will go under the `sensor:` header. In this example, we are assuming that there is a single follower node with the name `Bedroom` and has 2 sensors: `Temperature` and `Humidity`.
+
+```yaml
+sensor:
+- platform: rest
+  name: esphub
+  json_attributes_path: "$.nodes"
+  json_attributes:
+    - Bedroom
+  resource: http://192.168.1.9/collect
+  value_template: "OK"
+- platform: template
+  sensors:
+    esphub_bedroom_temp:
+      value_template: "{{ state_attr('sensor.esphub', 'Bedroom').Temperature }}"
+      friendly_name: "Bedroom Temperature"
+      unit_of_measurement: "°F"
+    esphub_bedroom_humidity:
+      value_template: "{{ state_attr('sensor.esphub', 'Bedroom').Humidity }}"
+      friendly_name: "Bedroom Humidity"
+      unit_of_measurement: "%"
+```

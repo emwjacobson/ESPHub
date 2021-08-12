@@ -7,9 +7,9 @@
 #include "config.h"
 
 #if MODE == 1
-#include "hub.h"
+#include "Hub.h"
 #elif MODE == 2
-#include "follower.h"
+#include "Follower.h"
 #endif
 
 Controller* controller;

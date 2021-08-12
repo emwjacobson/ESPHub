@@ -2,7 +2,7 @@
 #define MULTISENSOR_H
 
 #include <cstring>
-#include "sensor.h"
+#include "Sensor.h"
 
 class MultiSensor : public Sensor {
 protected:

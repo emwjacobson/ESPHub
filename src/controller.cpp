@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include "controller.h"
+#include "Controller.h"
 #include "config.h"
 
 void Controller::connectToAP(const char* SSID, const char* passwd) {

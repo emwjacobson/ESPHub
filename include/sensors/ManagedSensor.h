@@ -1,7 +1,7 @@
 #ifndef MANAGEDSENSOR_H
 #define MANAGEDSENSOR_H
 
-#include "sensor.h"
+#include "Sensor.h"
 
 class ManagedSensor : public Sensor {
 public:

@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
-#include "hub.h"
+#include "Hub.h"
 #include "config.h"
 #include "sensors/ManagedSensor.h"
 

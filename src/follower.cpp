@@ -6,7 +6,7 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
 #include "config.h"
-#include "follower.h"
+#include "Follower.h"
 #include "sensors/DHT11.h"
 
 Follower::Follower() {

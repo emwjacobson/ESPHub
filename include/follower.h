@@ -2,8 +2,8 @@
 #define FOLLOWER_D
 
 #include <vector>
-#include "controller.h"
-#include "sensors/sensor.h"
+#include "Controller.h"
+#include "sensors/Sensor.h"
 #include "config.h"
 
 class Follower : public Controller {

@@ -6,7 +6,7 @@
 #include <vector>
 #include <cstring>
 #include "config.h"
-#include "controller.h"
+#include "Controller.h"
 #include "sensors/ManagedSensor.h"
 
 class Node {

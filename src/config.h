@@ -39,5 +39,6 @@
 #define DHT11_Sensor
   #define DHT11_PIN D2
   #define DHT11_TEMP_OFFSET -1
+  #define DHT11_READ_FAHRENHEIT true
 
 #endif

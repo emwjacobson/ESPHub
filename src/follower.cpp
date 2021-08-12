@@ -30,8 +30,8 @@ Follower::Follower() {
   HTTPClient http;
 
   // // TODO: Return this to original IP address.
-  http.begin(wifi_client, "http://124b6aa2-1b95-4872-8f89-d23b097cee66.mock.pstmn.io/data");
-  // http.begin(wifi_client, "http://10.1.0.1/data");
+  // http.begin(wifi_client, "http://124b6aa2-1b95-4872-8f89-d23b097cee66.mock.pstmn.io/data");
+  http.begin(wifi_client, "http://10.1.0.1/data");
   http.addHeader("Content-Type", "application/json");
 
   DynamicJsonDocument doc(9001); // TODO: Calculate number later
@@ -40,9 +40,18 @@ Follower::Follower() {
   JsonArray sensor_doc = doc.createNestedArray("sensors");
 
   for (Sensor* s : this->sensors) {
-    JsonObject sensor = sensor_doc.createNestedObject();
-    sensor["type"] = s->getType();
-    sensor["value"] = s->getValue();
+    if (strcmp(s->getValue(), "multi") == 0) {
+      MultiSensor* ms = (MultiSensor*)s;
+      for (int i = 0; i < ms->getNumSensors(); i++) {
+        JsonObject sensor = sensor_doc.createNestedObject();
+        sensor["type"] = ms->getType(i);
+        sensor["value"] = ms->getValue(i);
+      }
+    } else {
+      JsonObject sensor = sensor_doc.createNestedObject();
+      sensor["type"] = s->getType();
+      sensor["value"] = s->getValue();
+    }
   }
 
   int json_size = measureJson(doc);

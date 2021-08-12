@@ -4,62 +4,58 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <ArduinoJson.h>
 #include "config.h"
 #include "follower.h"
+#include "sensors/DHT11.h"
 
 Follower::Follower() {
-  // time_t start = millis();
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
 
-  // WiFi.mode(WIFI_STA);
-  // WiFi.disconnect();
+  Serial.print("Attempting connection to '" HUB_SSID "'");
+  this->connectToAP(HUB_SSID, HUB_PASSWD);
 
-  // Serial.print("Attempting connection to '" HUB_SSID "'");
-  // this->connectToAP(HUB_SSID, HUB_PASSWD);
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println("\nConnected!");
 
-  // // The connection is delayed so we can run sensor collection while it's connecting
-  // while (WiFi.status() != WL_CONNECTED) {
-  //   Serial.print(".");
-  //   delay(500);
-  // }
-  // Serial.println("\nConnected!");
+  #ifdef DHT11_Sensor
+  this->addSensor(new DHT11Sensor(DHT11_PIN));
+  #endif
 
-  // #ifdef DHT11_Sensor
-  // this->addSensor(new DHT11Sensor(DHT11_PIN));
-  // #endif
-
-  // WiFiClient wifi_client;
-  // HTTPClient http;
+  WiFiClient wifi_client;
+  HTTPClient http;
 
   // // TODO: Return this to original IP address.
-  // // http.begin(wifi_client, "https://d89369fb-8a3f-4325-95b7-8580a84fe800.mock.pstmn.io/data");
+  http.begin(wifi_client, "http://124b6aa2-1b95-4872-8f89-d23b097cee66.mock.pstmn.io/data");
   // http.begin(wifi_client, "http://10.1.0.1/data");
-  // http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  http.addHeader("Content-Type", "application/json");
 
-  // for (int i=0; i < this->num_sensors; i++) {
-  //   String data((char*)NULL);
-  //   data.reserve(1024);
-  //   data.concat("name=" NODE_NAME);
-  //   data.concat("&type=");
-  //   data.concat(this->sensors[i]->getType());
-  //   data.concat("&value=");
-  //   Serial.println(this->sensors[i]->getType());
-  //   Serial.println(this->sensors[i]->getValue());
-  //   data.concat(this->sensors[i]->getValue());
-  //   Serial.println("Prereq");
-  //   int response_code = http.POST(data);
-  //   Serial.println("Postreq");
-  //   Serial.print("Sent with response code: ");
-  //   Serial.println(response_code);
-  //   Serial.println(http.getString());
-  // }
+  DynamicJsonDocument doc(9001); // TODO: Calculate number later
 
-  // Serial.print("Took ");
-  // Serial.print(millis() - start);
-  // Serial.print(" ms. Starting deep sleep.");
+  doc["name"] = NODE_NAME;
+  JsonArray sensor_doc = doc.createNestedArray("sensors");
+
+  for (Sensor* s : this->sensors) {
+    JsonObject sensor = sensor_doc.createNestedObject();
+    sensor["type"] = s->getType();
+    sensor["value"] = s->getValue();
+  }
+
+  int json_size = measureJson(doc);
+  char buffer[json_size];
+  serializeJson(doc, buffer, json_size);
+
+  int response_code = http.POST((uint8_t*)buffer, json_size);
+  Serial.println(response_code);
 
   // // Deep sleep for 1-2 minutes
-  // long time = random(60e6, 120e6);
-  // ESP.deepSleep(time);
+  // const long time = random(60e6, 120e6);
+  const long time = random(1e6, 5e6);
+  ESP.deepSleep(time);
 }
 
 void Follower::loop() {
@@ -70,12 +66,8 @@ void Follower::loop() {
   delay(1);
 }
 
-// void Follower::addSensor(Sensor* sensor) {
-//   if (num_sensors > MAX_SENSORS) {
-//     return;
-//   }
-//   this->sensors[this->num_sensors] = sensor;
-//   this->num_sensors++;
-// }
+void Follower::addSensor(Sensor* sensor) {
+  this->sensors.push_back(sensor);
+}
 
 #endif

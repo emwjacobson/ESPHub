@@ -135,7 +135,7 @@ Hub::Hub() {
 
     int num_nodes = this->getNodes().size();
     int num_sensors = 0;
-    for (const Node& n : this->getNodes()) {
+    for (Node& n : this->getNodes()) {
       num_sensors += n.getSensors().size();
     }
 
@@ -144,9 +144,9 @@ Hub::Hub() {
 
     JsonObject nodes = doc.createNestedObject("nodes");
 
-    for (const Node& n : this->getNodes()) {
+    for (Node& n : this->getNodes()) {
       JsonObject node = nodes.createNestedObject(n.getName());
-      for (const ManagedSensor& s : n.getSensors()) {
+      for (ManagedSensor& s : n.getSensors()) {
         node[s.getType()] = s.getValue();
       }
     }

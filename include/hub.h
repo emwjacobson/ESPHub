@@ -16,7 +16,7 @@ public:
     this->name[32] = 0;
   }
   const char* getName() const { return this->name; }
-  const std::vector<ManagedSensor>& getSensors() const { return this->sensors; }
+  std::vector<ManagedSensor>& getSensors() { return this->sensors; }
   ManagedSensor& sensorAt(const int& i) { return this->sensors.at(i); }
   void addSensor(const char* type) { this->sensors.push_back(std::move(ManagedSensor(type))); }
 private:
@@ -30,7 +30,7 @@ class Hub : public Controller {
 public:
   Hub();
   void loop() override;
-  const std::vector<Node>& getNodes() const { return this->nodes; }
+  std::vector<Node>& getNodes() { return this->nodes; }
   Node& nodeAt(const int& i) { return this->nodes.at(i); }
   void addNode(const char* name) { this->nodes.push_back(std::move(Node(name))); }
 private:

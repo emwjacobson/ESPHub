@@ -62,8 +62,8 @@ Follower::Follower() {
   Serial.println(response_code);
 
   // // Deep sleep for 1-2 minutes
-  // const long time = random(60e6, 120e6);
-  const long time = random(1e6, 5e6);
+  const long time = random(60e6, 120e6);
+  // const long time = random(5e6, 10e6);
   ESP.deepSleep(time);
 }
 

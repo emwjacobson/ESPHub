@@ -45,8 +45,9 @@ Hub::Hub() {
     //   ]
     // }
 
-    int doc_size = req.getBodySize();
-    DynamicJsonDocument doc(doc_size < 200 ? doc_size + 32 : doc_size);
+    // Devices reporting over 8 sensors will start to run into problems
+    const int doc_size = JSON_OBJECT_SIZE(2) + JSON_ARRAY_SIZE(8) + JSON_OBJECT_SIZE(8);
+    DynamicJsonDocument doc(doc_size);
 
     DeserializationError err = deserializeJson(doc, req.getBody());
 

@@ -1,6 +1,10 @@
 #ifndef WEBSERVER_H
 #define WEBSERVER_H
 
+#include <vector>
+#include <utility>
+#include <cstring>
+
 #define CALLBACK_BUFFER 16
 #define NUM_CALLBACKS 10
 
@@ -46,6 +50,12 @@ public:
     snprintf(buffer, buffer_size, "Connection: close");
     this->client.println(buffer);
 
+    for (std::pair<char[33], char[33]> header : this->headers) {
+      this->client.print(header.first);
+      this->client.print(": ");
+      this->client.println(header.second);
+    }
+
     if (body != nullptr) {
       snprintf(buffer, buffer_size, "Content-Length: %i", body_size);
     }
@@ -58,6 +68,16 @@ public:
     }
 
     this->m_isSent = true;
+  }
+
+  void setHeader(const char* key, const char* value) {
+    std::pair<char[33], char[33]> new_header;
+    new_header.first[32] = 0; new_header.second[32] = 0;
+
+    strncpy(new_header.first, key, 32);
+    strncpy(new_header.second, value, 32);
+
+    this->headers.push_back(std::move(new_header));
   }
 
   // Gets the raw parameter string, eg `key1=value1&key2=value2`
@@ -79,6 +99,7 @@ private:
   const char* body;
   int req_body_size;
   bool m_isSent;
+  std::vector<std::pair<char[33], char[33]>> headers;
 
 
   const char* getResponseCode(const int& code);

@@ -155,6 +155,8 @@ Hub::Hub() {
     size_t json_size = measureJson(doc);
     char buffer[json_size];
     serializeJson(doc, buffer, json_size);
+
+    req.setHeader("Content-Type", "application/json");
     req.send(200, buffer, json_size);
   });
 
@@ -177,6 +179,8 @@ Hub::Hub() {
     size_t json_size = measureJson(doc);
     char buffer[json_size];
     serializeJson(doc, buffer, json_size);
+
+    req.setHeader("Content-Type", "application/json");
 
     req.send(200, buffer, json_size);
   });

@@ -1,9 +1,9 @@
 #ifndef FOLLOWER_H
 #define FOLLOWER_D
 
-#include <Array.h>
-#include "controller.h"
-#include "sensors/sensor.h"
+#include <vector>
+#include "Controller.h"
+#include "sensors/Sensor.h"
 #include "config.h"
 
 class Follower : public Controller {
@@ -12,8 +12,7 @@ public:
   void loop() override;
   void addSensor(Sensor* sensor);
 private:
-  Sensor* sensors[MAX_SENSORS];
-  int num_sensors;
+  std::vector<Sensor*> sensors;
 };
 
 #endif

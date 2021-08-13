@@ -46,6 +46,6 @@
   #define DHT11_PIN D4
   #define DHT11_READ_FAHRENHEIT true
 
-#define CCS811_Sensor
+#define CCS811_Sensor // CO2 sensor. *NEEDS WARMUP PERIOD*
 
 #endif

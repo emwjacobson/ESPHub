@@ -34,6 +34,12 @@
 //////// Follower Node Configuration ////////
 /////////////////////////////////////////////
 
+// Only one mode should be uncommented. If multiple are uncommented then the first one will be
+// active one. The Readme provides more details about each mode.
+// #define MODE_DEEP_SLEEP
+#define MODE_ACTIVE_DELAY
+// #define MODE_ACTIVE
+
 // Uncomment all of the sensors that you would like to enable on this follower node
 
 #define DHT11_Sensor // Temperature and Humidity sensor

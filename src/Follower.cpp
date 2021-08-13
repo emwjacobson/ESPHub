@@ -31,55 +31,11 @@ Follower::Follower() {
   this->addSensor(new CCS811());
   #endif
 
-  // WiFiClient wifi_client;
-  // HTTPClient http;
-
-  // // // TODO: Return this to original IP address.
-  // http.begin(wifi_client, "http://124b6aa2-1b95-4872-8f89-d23b097cee66.mock.pstmn.io/data");
-  // // http.begin(wifi_client, "http://10.1.0.1/data");
-  // http.addHeader("Content-Type", "application/json");
-
-  // DynamicJsonDocument doc(9001); // TODO: Calculate number later
-
-  // doc["name"] = NODE_NAME;
-  // JsonArray sensor_doc = doc.createNestedArray("sensors");
-
-  // for (Sensor* s : this->sensors) {
-  //   if (strcmp(s->getValue(), "multi") == 0) {
-  //     MultiSensor* ms = (MultiSensor*)s;
-  //     for (int i = 0; i < ms->getNumSensors(); i++) {
-  //       JsonObject sensor = sensor_doc.createNestedObject();
-  //       sensor["type"] = ms->getType(i);
-  //       sensor["value"] = ms->getValue(i);
-  //     }
-  //   } else {
-  //     JsonObject sensor = sensor_doc.createNestedObject();
-  //     sensor["type"] = s->getType();
-  //     sensor["value"] = s->getValue();
-  //   }
-  // }
-
-  // int json_size = measureJson(doc);
-  // char buffer[json_size];
-  // serializeJson(doc, buffer, json_size);
-
-  // int response_code = http.POST((uint8_t*)buffer, json_size);
-  // Serial.println(response_code);
-
-  // // // Deep sleep for 1-2 minutes
-  // // const long time = random(60e6, 120e6);
-  // const long time = random(5e6, 10e6);
-  // ESP.deepSleep(time);
+  this->http.begin(wifi_client, "http://10.1.0.1/data");
 }
 
 void Follower::loop() {
-  WiFiClient wifi_client;
-  HTTPClient http;
-
-  // // TODO: Return this to original IP address.
-  // http.begin(wifi_client, "http://124b6aa2-1b95-4872-8f89-d23b097cee66.mock.pstmn.io/data");
-  http.begin(wifi_client, "http://10.1.0.1/data");
-  http.addHeader("Content-Type", "application/json");
+  this->http.addHeader("Content-Type", "application/json");
 
   DynamicJsonDocument doc(9001); // TODO: Calculate number later
 
@@ -105,10 +61,16 @@ void Follower::loop() {
   char buffer[json_size];
   serializeJson(doc, buffer, json_size);
 
-  int response_code = http.POST((uint8_t*)buffer, json_size);
+  int response_code = this->http.POST((uint8_t*)buffer, json_size);
   Serial.println(response_code);
 
-  delay(30000);
+  #if defined(MODE_ACTIVE_DELAY)
+  delay(random(60e3, 120e3)); // Sleep for 60-120 seconds
+  #elif defined(MODE_ACTIVE)
+  delay(1000); // Only sleep for 1 second.
+  #else // Fallback is Deep Sleep
+  ESP.deepSleep(random(60e6, 120e6)); // Deep sleep for 60-120 seconds
+  #endif
 }
 
 void Follower::addSensor(Sensor* sensor) {

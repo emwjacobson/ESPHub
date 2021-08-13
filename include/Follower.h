@@ -13,6 +13,8 @@ public:
   void addSensor(Sensor* sensor);
 private:
   std::vector<Sensor*> sensors;
+  WiFiClient wifi_client;
+  HTTPClient http;
 };
 
 #endif

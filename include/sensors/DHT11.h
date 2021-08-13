@@ -39,10 +39,10 @@ public:
     if (id == 0) {
       float temp = this->dht.readTemperature(DHT11_READ_FAHRENHEIT);
       int tries = 10;
-      while (temp == NAN && tries >= 0) {
+      while (temp == NAN && tries > 0) {
         temp = this->dht.readTemperature(DHT11_READ_FAHRENHEIT);
         tries--;
-        delay(100);
+        delay(250);
       }
 
       if (tries == 0 && temp == NAN) {

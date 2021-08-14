@@ -46,7 +46,8 @@ public:
       }
 
       if (tries == 0 && temp == NAN) {
-        snprintf(this->value, 32, "%.2f", temp);
+        strncpy(this->value, "nan", 32);
+        Serial.println("Error reading Temperature.");
       } else {
         snprintf(this->value, 32, "%.2f", temp);
       }
@@ -60,7 +61,8 @@ public:
         }
 
         if (tries == 0 && humidity == NAN) {
-          snprintf(this->value, 32, "%.2f", humidity);
+        strncpy(this->value, "nan", 32);
+        Serial.println("Error reading Humidity.");
         } else {
           snprintf(this->value, 32, "%.2f", humidity);
         }

@@ -2,6 +2,8 @@
 #define FOLLOWER_D
 
 #include <vector>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 #include "Controller.h"
 #include "sensors/Sensor.h"
 #include "config.h"

@@ -26,7 +26,8 @@ public:
     }
 
     if (tries == 0 && data_read != 0) {
-      strncpy(this->value, "ERROR", 32);
+      strncpy(this->value, "nan", 32);
+      Serial.println("Error reading CO2.");
       return this->value;
     }
 

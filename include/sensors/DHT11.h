@@ -49,7 +49,7 @@ public:
 
       if (tries == 0 && isnan(temp)) {
         Serial.println("Got Temp = nan Final");
-        strncpy(this->value, "nan", 32);
+        strncpy(this->value, "error", 32);
         Serial.println("Error reading Temperature.");
       } else {
         snprintf(this->value, 32, "%.2f", temp);
@@ -67,13 +67,13 @@ public:
 
       if (tries == 0 && humidity == isnan(humidity)) {
         Serial.println("Got Humidity = nan Final");
-        strncpy(this->value, "nan", 32);
+        strncpy(this->value, "error", 32);
         Serial.println("Error reading Humidity.");
       } else {
         snprintf(this->value, 32, "%.2f", humidity);
       }
     } else {
-        strncpy(this->value, "UNKNOWN", 32);
+        strncpy(this->value, "error", 32);
     }
 
     return this->value;

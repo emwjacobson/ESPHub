@@ -41,6 +41,7 @@ void Follower::loop() {
 
   doc["name"] = NODE_NAME;
   JsonArray sensor_doc = doc.createNestedArray("sensors");
+  boolean error_encountered = false;
 
   for (Sensor* s : this->sensors) {
     if (strcmp(s->getValue(), "multi") == 0) {
@@ -48,12 +49,20 @@ void Follower::loop() {
       for (int i = 0; i < ms->getNumSensors(); i++) {
         JsonObject sensor = sensor_doc.createNestedObject();
         sensor["type"] = ms->getType(i);
-        sensor["value"] = ms->getValue(i);
+        char* val = ms->getValue(i);
+        sensor["value"] = val;
+        if (strncmp(val, "error", 32) == 0) {
+          error_encountered = true;
+        }
       }
     } else {
       JsonObject sensor = sensor_doc.createNestedObject();
       sensor["type"] = s->getType();
-      sensor["value"] = s->getValue();
+      const char* val = s->getValue();
+      sensor["value"] = val;
+      if (strncmp(val, "error", 32) == 0) {
+        error_encountered = true;
+      }
     }
   }
 
@@ -63,6 +72,11 @@ void Follower::loop() {
 
   int response_code = this->http.POST((uint8_t*)buffer, json_size);
   Serial.println(response_code);
+
+  if (error_encountered) { // If were getting errors, attempt to restart the device.
+    Serial.println("Errors encountered, restarting device...");
+    ESP.restart();
+  }
 
   #if defined(MODE_ACTIVE_DELAY)
   delay(random(60e3, 120e3)); // Sleep for 60-120 seconds

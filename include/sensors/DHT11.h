@@ -39,33 +39,39 @@ public:
     if (id == 0) {
       float temp = this->dht.readTemperature(DHT11_READ_FAHRENHEIT);
       int tries = 10;
-      while (temp == NAN && tries > 0) {
+      int delay_ms = 0;
+      while (isnan(temp) && tries > 0) {
+        Serial.println("Got Temp = nan");
         temp = this->dht.readTemperature(DHT11_READ_FAHRENHEIT);
         tries--;
-        delay(250);
+        delay(delay_ms += 100);
       }
 
-      if (tries == 0 && temp == NAN) {
+      if (tries == 0 && isnan(temp)) {
+        Serial.println("Got Temp = nan Final");
         strncpy(this->value, "nan", 32);
         Serial.println("Error reading Temperature.");
       } else {
         snprintf(this->value, 32, "%.2f", temp);
       }
     } else if (id == 1) {
-        float humidity = this->dht.readHumidity();
-        int tries = 10;
-        while (humidity == NAN && tries >= 0) {
-          humidity = this->dht.readHumidity();
-          tries--;
-          delay(100);
-        }
+      float humidity = this->dht.readHumidity();
+      int tries = 10;
+      int delay_ms = 0;
+      while (isnan(humidity) && tries >= 0) {
+        Serial.println("Got Humidity = nan");
+        humidity = this->dht.readHumidity();
+        tries--;
+        delay(delay_ms += 100);
+      }
 
-        if (tries == 0 && humidity == NAN) {
+      if (tries == 0 && humidity == isnan(humidity)) {
+        Serial.println("Got Humidity = nan Final");
         strncpy(this->value, "nan", 32);
         Serial.println("Error reading Humidity.");
-        } else {
-          snprintf(this->value, 32, "%.2f", humidity);
-        }
+      } else {
+        snprintf(this->value, 32, "%.2f", humidity);
+      }
     } else {
         strncpy(this->value, "UNKNOWN", 32);
     }

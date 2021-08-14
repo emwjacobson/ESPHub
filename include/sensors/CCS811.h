@@ -19,9 +19,10 @@ public:
   const char* getValue() override {
     uint8_t data_read = this->ccs.readData();
     int tries = 10;
+    int delay_ms = 0;
     while (data_read != 0 && tries > 0) {
       data_read = this->ccs.readData();
-      delay(250);
+      delay(delay_ms += 100);
       tries--;
     }
 

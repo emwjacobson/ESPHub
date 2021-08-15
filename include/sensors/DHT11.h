@@ -44,7 +44,7 @@ public:
         Serial.println("Got Temp = nan");
         temp = this->dht.readTemperature(DHT11_READ_FAHRENHEIT);
         tries--;
-        delay(delay_ms += 100);
+        delay(delay_ms += 200);
       }
 
       if (tries == 0 && isnan(temp)) {
@@ -62,7 +62,7 @@ public:
         Serial.println("Got Humidity = nan");
         humidity = this->dht.readHumidity();
         tries--;
-        delay(delay_ms += 100);
+        delay(delay_ms += 200);
       }
 
       if (tries == 0 && humidity == isnan(humidity)) {

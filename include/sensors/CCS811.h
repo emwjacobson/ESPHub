@@ -22,7 +22,7 @@ public:
     int delay_ms = 0;
     while (data_read != 0 && tries > 0) {
       data_read = this->ccs.readData();
-      delay(delay_ms += 100);
+      delay(delay_ms += 200);
       tries--;
     }
 

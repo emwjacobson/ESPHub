@@ -93,7 +93,9 @@ void Follower::loop() {
   }
 
   #if defined(MODE_ACTIVE_DELAY)
-  WiFi.disconnect();
+    #ifdef ACTIVE_DELAY_INTERNET_DISCONNECT
+    WiFi.disconnect();
+    #endif
   delay(random(60e3, 120e3)); // Sleep for 60-120 seconds
   #elif defined(MODE_ACTIVE)
   delay(1000); // Only sleep for 1 second.

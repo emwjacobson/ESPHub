@@ -38,6 +38,7 @@
 // active one. The Readme provides more details about each mode.
 // #define MODE_DEEP_SLEEP
 #define MODE_ACTIVE_DELAY
+  #define ACTIVE_DELAY_INTERNET_DISCONNECT
 // #define MODE_ACTIVE
 
 // Uncomment all of the sensors that you would like to enable on this follower node

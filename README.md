@@ -52,7 +52,7 @@ Follower setup should start with giving the node a unique `NODE_NAME` to identif
 There are 3 modes that a follower can be in, `MODE_DEEP_SLEEP`, `MODE_ACTIVE_SLEEP`, and `MODE_ACTIVE`. Only **one** should be uncommented in the config file.
 
 ```C++
-#define
+#define MODE_DEEP_SLEEP
 #define MODE_ACTIVE_DELAY
 #define MODE_ACTIVE
 ```
@@ -60,9 +60,10 @@ There are 3 modes that a follower can be in, `MODE_DEEP_SLEEP`, `MODE_ACTIVE_SLE
 The modes are described as follows:
 - `MODE_DEEP_SLEEP`: The node will go into a deep sleep mode for between 1 and 2 minutes. This is good for super low power consumption and sensors that can take readings without warming up.
 - `MODE_ACTIVE_DELAY`: The node will always remain on, this is good for sensors that might need a warmup period after starting. After reporting data the node will pause for between 1 and 2 minutes before reporting again.
+  - This has an additional option, `ACTIVE_DELAY_INTERNET_DISCONNECT`. When this is enabled, it will disconnect from WiFi after reporting. Despite intuition, an ESP8266 will consume **more** power when **disconnected** from WiFi.
 - `MODE_ACTIVE`: This one continuously reports data, will only pause for 1 second before data readings.
 
-**NOTE**: The Hub's SoftAP is limited to only 8 clients connected at a time. The Active and Active_Delay functions **DO NOT** disconnect from the AP after reporting data. This means that you will be limited to 8 Active Follower nodes connected at a time. When using the Deep Sleep mode, the node will fully disconnect from the AP. This should allow for many more nodes to be added as they should not all be connected at the same time.
+**NOTE**: The Hub's SoftAP is limited to only 8 clients connected at a time. The ACTIVE and ACTIVE_DELAY modes **DO NOT** disconnect from the AP after reporting data (unless the `ACTIVE_DELAY_INTERNET_DISCONNECT` option is uncommented for ACTIVE_DELAY). This means that you will be limited to 8 Active Follower nodes connected at a time. When using the DEEP_SLEEP mode (or when `ACTIVE_DELAY_INTERNET_DISCONNECT` is uncommented), the node will fully disconnect from the AP. This should allow for many more nodes to be added as they should not all be connected at the same time.
 
 To enable a sensor for a Follower node, uncomment the line and any other options.
 

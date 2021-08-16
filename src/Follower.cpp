@@ -35,7 +35,19 @@ Follower::Follower() {
 }
 
 void Follower::loop() {
-  this->http.addHeader("Content-Type", "application/json");
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.print("Reconnecting to WiFi");
+    this->connectToAP(HUB_SSID, HUB_PASSWD);
+
+    while (WiFi.status() != WL_CONNECTED) {
+      Serial.print(".");
+      delay(500);
+    }
+
+    Serial.println();
+  }
+
+
 
   DynamicJsonDocument doc(9001); // TODO: Calculate number later
 
@@ -66,6 +78,8 @@ void Follower::loop() {
     }
   }
 
+  this->http.addHeader("Content-Type", "application/json");
+
   int json_size = measureJson(doc);
   char buffer[json_size];
   serializeJson(doc, buffer, json_size);
@@ -79,6 +93,7 @@ void Follower::loop() {
   }
 
   #if defined(MODE_ACTIVE_DELAY)
+  WiFi.disconnect();
   delay(random(60e3, 120e3)); // Sleep for 60-120 seconds
   #elif defined(MODE_ACTIVE)
   delay(1000); // Only sleep for 1 second.

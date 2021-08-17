@@ -12,9 +12,7 @@ class Follower : public Controller {
 public:
   Follower();
   void loop() override;
-  void addSensor(Sensor* sensor);
 private:
-  std::vector<Sensor*> sensors;
   WiFiClient wifi_client;
   HTTPClient http;
 };

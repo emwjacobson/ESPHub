@@ -7,6 +7,8 @@
 #include "Hub.h"
 #include "config.h"
 #include "sensors/ManagedSensor.h"
+#include "sensors/CCS811.h"
+#include "sensors/DHT11.h"
 
 Hub::Hub() {
   WiFi.mode(WIFI_AP_STA);
@@ -26,6 +28,16 @@ Hub::Hub() {
 
   Serial.println("Starting server...");
   this->http.begin();
+
+
+  #ifdef DHT11_Sensor
+  this->addSensor(new DHT11Sensor(DHT11_PIN));
+  #endif
+
+  #ifdef CCS811_Sensor
+  this->addSensor(new CCS811());
+  #endif
+
 
   // Used to push data to the Hub node
   this->http.registerEndpoint("/data", HTTP_METHOD::POST, [this](Request& req) {
@@ -140,13 +152,47 @@ Hub::Hub() {
       num_sensors += n.getSensors().size();
     }
 
-    const size_t doc_size = JSON_OBJECT_SIZE(num_nodes + num_sensors + 1);
+    // Count self
+    num_nodes++;
+    num_sensors += this->sensors.size();
+
+    const size_t doc_size = JSON_OBJECT_SIZE(num_nodes + num_sensors + 1) + 128;
     DynamicJsonDocument doc(doc_size);
 
     JsonObject nodes = doc.createNestedObject("nodes");
 
+    // Add data from sensors connected to the Hub
+    JsonObject node = nodes.createNestedObject(NODE_NAME);
+    for (Sensor* s : this->sensors) {
+      if (strcmp(s->getValue(), "multi") == 0) {
+        MultiSensor* ms = (MultiSensor*)s;
+        for (int i = 0; i < ms->getNumSensors(); i++) {
+          char type[33];
+          strncpy(type, ms->getType(i), 32); type[32] = 0;
+          char val[33];
+          strncpy(val, ms->getValue(i), 32); val[32] = 0;
+          node[type] = val;
+          Serial.print(type);
+          Serial.print("=");
+          Serial.println(val);
+          // node.getOrAddMember(type).set(val);
+        }
+      } else {
+        char type[33];
+        strncpy(type, s->getType(), 32); type[32] = 0;
+        char val[33];
+        strncpy(val, s->getValue(), 32); val[32] = 0;
+        node[type] = val;
+        Serial.print(type);
+        Serial.print("=");
+        Serial.println(val);
+        // node.getOrAddMember(type).set(val);
+      }
+    }
+
+    // Add data for Follower nodes
     for (Node& n : this->getNodes()) {
-      JsonObject node = nodes.createNestedObject(n.getName());
+      node = nodes.createNestedObject(n.getName());
       for (ManagedSensor& s : n.getSensors()) {
         node[s.getType()] = s.getValue();
       }
@@ -158,6 +204,7 @@ Hub::Hub() {
 
     req.setHeader("Content-Type", "application/json");
     req.send(200, buffer, json_size);
+    Serial.println("Sent");
   });
 
   // Used to get information on the hub node itself

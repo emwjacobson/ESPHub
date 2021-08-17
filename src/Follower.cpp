@@ -104,8 +104,4 @@ void Follower::loop() {
   #endif
 }
 
-void Follower::addSensor(Sensor* sensor) {
-  this->sensors.push_back(sensor);
-}
-
 #endif

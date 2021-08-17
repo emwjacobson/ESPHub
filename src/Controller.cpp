@@ -15,4 +15,8 @@ bool Controller::setupSoftAP(const char* SSID, const char* passwd) {
   return WiFi.softAP(SSID, passwd, 1, HUB_SSID_HIDDEN, 8);
 }
 
+void Controller::addSensor(Sensor* sensor) {
+  this->sensors.push_back(sensor);
+}
+
 #endif

@@ -54,6 +54,7 @@ There are 3 modes that a follower can be in, `MODE_DEEP_SLEEP`, `MODE_ACTIVE_SLE
 ```C++
 #define MODE_DEEP_SLEEP
 #define MODE_ACTIVE_DELAY
+  #define ACTIVE_DELAY_INTERNET_DISCONNECT
 #define MODE_ACTIVE
 ```
 

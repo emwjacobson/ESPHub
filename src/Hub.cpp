@@ -171,22 +171,20 @@ Hub::Hub() {
           strncpy(type, ms->getType(i), 32); type[32] = 0;
           char val[33];
           strncpy(val, ms->getValue(i), 32); val[32] = 0;
-          node[type] = val;
           Serial.print(type);
           Serial.print("=");
           Serial.println(val);
-          // node.getOrAddMember(type).set(val);
+          node[type] = val;
         }
       } else {
         char type[33];
         strncpy(type, s->getType(), 32); type[32] = 0;
         char val[33];
         strncpy(val, s->getValue(), 32); val[32] = 0;
-        node[type] = val;
         Serial.print(type);
         Serial.print("=");
         Serial.println(val);
-        // node.getOrAddMember(type).set(val);
+        node[type] = val;
       }
     }
 

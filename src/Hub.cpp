@@ -10,7 +10,7 @@
 #include "sensors/CCS811.h"
 #include "sensors/DHT11.h"
 
-Hub::Hub() {
+Hub::Hub() : http_server(80) {
   WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect();
 
@@ -27,7 +27,7 @@ Hub::Hub() {
   Serial.println("\nConnected!");
 
   Serial.println("Starting server...");
-  this->http.begin();
+  this->http_server.begin();
 
 
   #ifdef DHT11_Sensor
@@ -40,7 +40,7 @@ Hub::Hub() {
 
 
   // Used to push data to the Hub node
-  this->http.registerEndpoint("/data", HTTP_METHOD::POST, [this](Request& req) {
+  this->http_server.on("/data", [this]() {
     // Input data should be JSON in this form
     // {
     //   "name": "Bedroom",
@@ -57,27 +57,32 @@ Hub::Hub() {
     //   ]
     // }
 
+    if (this->http_server.method() != HTTPMethod::HTTP_POST) {
+      this->http_server.send(405, "text/plain");
+      return;
+    }
+
     // Devices reporting over 8 sensors will start to run into problems
     const int doc_size = JSON_OBJECT_SIZE(2) + JSON_ARRAY_SIZE(8) + JSON_OBJECT_SIZE(8);
     DynamicJsonDocument doc(doc_size);
 
-    DeserializationError err = deserializeJson(doc, req.getBody());
+    DeserializationError err = deserializeJson(doc, this->http_server.arg("plain"));
 
     if (err) {
       Serial.print("Error: ");
       Serial.println(err.f_str());
-      req.send(400);
+      this->http_server.send(400, "text/plain");
       return;
     }
 
     if (doc["name"] == nullptr) {
-      req.send(400);
+      this->http_server.send(400, "text/plain");
       return;
     }
 
     if (doc["sensors"].size() <= 0) {
       Serial.println("Sensors is empty, don't do anything");
-      req.send(304);
+      this->http_server.send(304, "text/plain");
       return;
     }
 
@@ -102,7 +107,7 @@ Hub::Hub() {
     Node& n = this->nodeAt(node_index);
     for (const JsonObject& s : doc["sensors"].as<JsonArray>()) {
       if (s["type"] == nullptr || s["value"] == nullptr) {
-        req.send(400);
+        this->http_server.send(400, "text/plain");
         return;
       }
 
@@ -122,11 +127,11 @@ Hub::Hub() {
       n.sensorAt(sensor_index).setValue(s["value"]);
     }
 
-    req.send(200);
+    this->http_server.send(200, "text/plain");
   });
 
   // Used to collect data from the Hub node
-  this->http.registerEndpoint("/collect", HTTP_METHOD::GET, [this](Request& req) {
+  this->http_server.on("/collect", [this]() {
     // Returns a JSON object in this form:
     // {
     //   "nodes": {
@@ -144,8 +149,12 @@ Hub::Hub() {
     //   }
     // }
 
-    // Calculate how much space is needed for the JSON Document
+    if (this->http_server.method() != HTTPMethod::HTTP_GET) {
+      this->http_server.send(405, "text/plain");
+      return;
+    }
 
+    // Calculate how much space is needed for the JSON Document
     int num_nodes = this->getNodes().size();
     int num_sensors = 0;
     for (Node& n : this->getNodes()) {
@@ -200,19 +209,22 @@ Hub::Hub() {
     char buffer[json_size];
     serializeJson(doc, buffer, json_size);
 
-    req.setHeader("Content-Type", "application/json");
-    req.send(200, buffer, json_size);
-    Serial.println("Sent");
+    this->http_server.send(200, "application/json", buffer, json_size);
   });
 
   // Used to get information on the hub node itself
-  this->http.registerEndpoint("/info", HTTP_METHOD::GET, [this](Request& req) {
+  this->http_server.on("/info", [this]() {
     // Response will be in this form:
     // {
     //   "Num Nodes": ##,
     //   "Free Heap": ##,
     //   "Heap Fragmentation": ##
     // }
+
+    if (this->http_server.method() != HTTPMethod::HTTP_GET) {
+      this->http_server.send(405, "text/plain");
+      return;
+    }
 
     const size_t doc_size = JSON_OBJECT_SIZE(4); // The main element + 2 elements
     DynamicJsonDocument doc(doc_size);
@@ -225,15 +237,13 @@ Hub::Hub() {
     char buffer[json_size];
     serializeJson(doc, buffer, json_size);
 
-    req.setHeader("Content-Type", "application/json");
-
-    req.send(200, buffer, json_size);
+    this->http_server.send(200, "application/json", buffer, json_size);
   });
 }
 
 void Hub::loop() {
   // Handle clients
-  this->http.handleClients();
+  this->http_server.handleClient();
 }
 
 #endif

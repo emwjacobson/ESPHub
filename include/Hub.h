@@ -2,7 +2,7 @@
 #define HUB_H
 
 #include <Arduino.h>
-#include <WebServer.h>
+#include <ESP8266WebServer.h>
 #include <vector>
 #include <cstring>
 #include "config.h"
@@ -34,7 +34,7 @@ public:
   Node& nodeAt(const int& i) { return this->nodes.at(i); }
   void addNode(const char* name) { this->nodes.push_back(std::move(Node(name))); }
 private:
-  WebServer http;
+  ESP8266WebServer http_server;
   std::vector<Node> nodes;
 };
 

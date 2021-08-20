@@ -26,9 +26,6 @@ Hub::Hub() : http_server(80) {
   }
   Serial.println("\nConnected!");
 
-  Serial.println("Starting server...");
-  this->http_server.begin();
-
 
   #ifdef DHT11_Sensor
   this->addSensor(new DHT11Sensor(DHT11_PIN));
@@ -197,6 +194,8 @@ Hub::Hub() : http_server(80) {
       }
     }
 
+    Serial.println();
+
     // Add data for Follower nodes
     for (Node& n : this->getNodes()) {
       node = nodes.createNestedObject(n.getName());
@@ -239,6 +238,9 @@ Hub::Hub() : http_server(80) {
 
     this->http_server.send(200, "application/json", buffer, json_size);
   });
+
+  this->http_server.begin();
+  Serial.println("HTTP Server Started!");
 }
 
 void Hub::loop() {

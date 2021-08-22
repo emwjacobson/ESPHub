@@ -53,7 +53,7 @@ void Follower::loop() {
 
   doc["name"] = NODE_NAME;
   JsonArray sensor_doc = doc.createNestedArray("sensors");
-  boolean error_encountered = false;
+  bool error_encountered = false;
 
   for (Sensor* s : this->sensors) {
     if (strcmp(s->getValue(), "multi") == 0) {

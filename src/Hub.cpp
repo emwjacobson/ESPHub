@@ -164,8 +164,9 @@ Hub::Hub() : http_server(80) {
 
     const size_t doc_size = JSON_OBJECT_SIZE(num_nodes + num_sensors + 1) + 128;
     DynamicJsonDocument doc(doc_size);
-
     JsonObject nodes = doc.createNestedObject("nodes");
+
+    bool error_encountered = false;
 
     // Add data from sensors connected to the Hub
     JsonObject node = nodes.createNestedObject(NODE_NAME);
@@ -181,6 +182,9 @@ Hub::Hub() : http_server(80) {
           Serial.print("=");
           Serial.println(val);
           node[type] = val;
+          if (strncmp(val, "error", 32) == 0) {
+            error_encountered = true;
+          }
         }
       } else {
         char type[33];
@@ -191,6 +195,9 @@ Hub::Hub() : http_server(80) {
         Serial.print("=");
         Serial.println(val);
         node[type] = val;
+        if (strncmp(val, "error", 32) == 0) {
+          error_encountered = true;
+        }
       }
     }
 
@@ -209,6 +216,11 @@ Hub::Hub() : http_server(80) {
     serializeJson(doc, buffer, json_size);
 
     this->http_server.send(200, "application/json", buffer, json_size);
+
+    if (error_encountered) { // If were getting errors, attempt to restart the device.
+      Serial.println("Errors encountered, restarting device...");
+      ESP.restart();
+    }
   });
 
   // Used to get information on the hub node itself

@@ -13,7 +13,7 @@ public:
 
     // Wait for the sensor to become available
     while (!this->ccs.available()) delay(100);
-    Serial.println("Available!");
+    Serial.println("CO2 Available!");
   }
 
   const char* getValue() override {
@@ -22,7 +22,7 @@ public:
     int delay_ms = 0;
     while (data_read != 0 && tries > 0) {
       data_read = this->ccs.readData();
-      delay(delay_ms += 200);
+      delay(delay_ms += 250);
       tries--;
     }
 

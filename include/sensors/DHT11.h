@@ -42,9 +42,9 @@ public:
       int delay_ms = 0;
       while (isnan(temp) && tries > 0) {
         Serial.println("Got Temp = nan");
-        temp = this->dht.readTemperature(DHT11_READ_FAHRENHEIT);
+        temp = this->dht.readTemperature(DHT11_READ_FAHRENHEIT, true);
         tries--;
-        delay(delay_ms += 200);
+        delay(delay_ms += 250);
       }
 
       if (tries == 0 && isnan(temp)) {
@@ -58,14 +58,14 @@ public:
       float humidity = this->dht.readHumidity();
       int tries = 10;
       int delay_ms = 0;
-      while (isnan(humidity) && tries >= 0) {
+      while (isnan(humidity) && tries > 0) {
         Serial.println("Got Humidity = nan");
-        humidity = this->dht.readHumidity();
+        humidity = this->dht.readHumidity(true);
         tries--;
-        delay(delay_ms += 200);
+        delay(delay_ms += 250);
       }
 
-      if (tries == 0 && humidity == isnan(humidity)) {
+      if (tries == 0 && isnan(humidity)) {
         Serial.println("Got Humidity = nan Final");
         strncpy(this->value, "error", 32);
         Serial.println("Error reading Humidity.");

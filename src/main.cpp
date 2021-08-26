@@ -18,9 +18,9 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Serial Initialized");
 
-  if (!LittleFS.begin()) {
-    Serial.println("An error has occured mounting LittleFS");
-  }
+  // if (!LittleFS.begin()) {
+  //   Serial.println("An error has occured mounting LittleFS");
+  // }
 
   #if MODE == 1
   controller = new Hub();

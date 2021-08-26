@@ -9,6 +9,7 @@
 #include "sensors/ManagedSensor.h"
 #include "sensors/CCS811.h"
 #include "sensors/DHT11.h"
+#include "sensors/Photoresistor.h"
 
 Hub::Hub() : http_server(80) {
   WiFi.mode(WIFI_AP_STA);
@@ -33,6 +34,10 @@ Hub::Hub() : http_server(80) {
 
   #ifdef CCS811_Sensor
   this->addSensor(new CCS811());
+  #endif
+
+  #ifdef Photoresistor_Sensor
+  this->addSensor(new Photoresistor());
   #endif
 
 

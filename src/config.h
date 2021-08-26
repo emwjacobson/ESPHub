@@ -44,9 +44,11 @@
 // Uncomment all of the sensors that you would like to enable on this follower node
 
 #define DHT11_Sensor // Temperature and Humidity sensor
-  #define DHT11_PIN D4
+  #define DHT11_PIN D7
   #define DHT11_READ_FAHRENHEIT true
 
 #define CCS811_Sensor // CO2 sensor. *NEEDS WARMUP PERIOD*
+
+#define Photoresistor_Sensor
 
 #endif

@@ -263,6 +263,7 @@ Hub::Hub() : http_server(80) {
 void Hub::loop() {
   // Handle clients
   this->http_server.handleClient();
+  delayMicroseconds(500);
 }
 
 #endif

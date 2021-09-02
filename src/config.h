@@ -49,6 +49,8 @@
 
 #define CCS811_Sensor // CO2 sensor. *NEEDS WARMUP PERIOD*
 
-#define Photoresistor_Sensor
+// #define Photoresistor_Sensor
+
+#define BH1750_Sensor
 
 #endif

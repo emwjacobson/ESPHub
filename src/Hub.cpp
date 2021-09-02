@@ -10,6 +10,7 @@
 #include "sensors/CCS811.h"
 #include "sensors/DHT11.h"
 #include "sensors/Photoresistor.h"
+#include "sensors/BH1750.h"
 
 Hub::Hub() : http_server(80) {
   WiFi.mode(WIFI_AP_STA);
@@ -27,6 +28,7 @@ Hub::Hub() : http_server(80) {
   }
   Serial.println("\nConnected!");
 
+  Wire.begin();
 
   #ifdef DHT11_Sensor
   this->addSensor(new DHT11Sensor(DHT11_PIN));
@@ -38,6 +40,10 @@ Hub::Hub() : http_server(80) {
 
   #ifdef Photoresistor_Sensor
   this->addSensor(new Photoresistor());
+  #endif
+
+  #ifdef BH1750_Sensor
+  this->addSensor(new BH1750Sensor());
   #endif
 
 

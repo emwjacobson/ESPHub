@@ -11,6 +11,19 @@ public:
   }
 
   const char* getValue() override {
+    float light_level = this->lightMeter.readLightLevel();
+
+    // Auto adjust MTreg for super high/low values
+    // https://github.com/claws/BH1750/blob/master/examples/BH1750autoadjust/BH1750autoadjust.ino
+
+    if (light_level > 40000) { // Very bright
+      this->lightMeter.setMTreg(32);
+    } else if (light_level > 10) { // Default
+      this->lightMeter.setMTreg(69);
+    } else { // Very Dark
+      this->lightMeter.setMTreg(138);
+    }
+
     snprintf(this->value, 32, "%f", this->lightMeter.readLightLevel());
     return this->value;
   }

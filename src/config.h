@@ -15,9 +15,6 @@
 #define HUB_SSID "ESPHub"
 #define HUB_PASSWD "ChangeMe!"
 
-// Set HUB_SSID_HIDDEN to 0 to hide SSID from showing up.
-#define HUB_SSID_HIDDEN 0
-
 
 
 ////////////////////////////////////////
@@ -27,6 +24,9 @@
 // EXTERNAL_SSID is the SSID that the Hub node will connect to to relay data from the follower nodes.
 #define EXTERNAL_SSID ""
 #define EXTERNAL_PASSWD ""
+
+// Set HUB_SSID_HIDDEN to 0 to hide SSID from showing up.
+#define HUB_SSID_HIDDEN 0
 
 
 
@@ -49,7 +49,9 @@
 
 #define CCS811_Sensor // CO2 sensor. *NEEDS WARMUP PERIOD*
 
-// #define Photoresistor_Sensor
+// #define Photoresistor_Sensor // Uses the ESP8266's only A0 analog pin!
+
+// #define ResistiveSoil_Sensor // Uses the ESP8266's only A0 analog pin!
 
 #define BH1750_Sensor
 

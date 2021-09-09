@@ -11,6 +11,7 @@
 #include "sensors/DHT11.h"
 #include "sensors/Photoresistor.h"
 #include "sensors/BH1750.h"
+#include "sensors/ResistiveSoil.h"
 
 Hub::Hub() : http_server(80) {
   WiFi.mode(WIFI_AP_STA);
@@ -30,6 +31,12 @@ Hub::Hub() : http_server(80) {
 
   Wire.begin();
 
+
+
+  // ******************************
+  // BEGIN SENSORS
+  // ******************************
+
   #ifdef DHT11_Sensor
   this->addSensor(new DHT11Sensor(DHT11_PIN));
   #endif
@@ -45,6 +52,15 @@ Hub::Hub() : http_server(80) {
   #ifdef BH1750_Sensor
   this->addSensor(new BH1750Sensor());
   #endif
+
+  #ifdef ResistiveSoil_Sensor
+  this->addSensor(new ResistiveSoil());
+  #endif
+
+  // ******************************
+  // END SENSORS
+  // ******************************
+
 
 
   // Used to push data to the Hub node
@@ -136,6 +152,9 @@ Hub::Hub() : http_server(80) {
     }
 
     this->http_server.send(200, "text/plain");
+
+    doc.garbageCollect();
+    doc.clear();
   });
 
   // Used to collect data from the Hub node

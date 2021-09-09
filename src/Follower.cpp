@@ -7,8 +7,12 @@
 #include <ArduinoJson.h>
 #include "config.h"
 #include "Follower.h"
-#include "sensors/DHT11.h"
+#include "sensors/ManagedSensor.h"
 #include "sensors/CCS811.h"
+#include "sensors/DHT11.h"
+#include "sensors/Photoresistor.h"
+#include "sensors/BH1750.h"
+#include "sensors/ResistiveSoil.h"
 
 Follower::Follower() {
   WiFi.mode(WIFI_STA);
@@ -23,6 +27,12 @@ Follower::Follower() {
   }
   Serial.println("\nConnected!");
 
+
+
+  // ******************************
+  // BEGIN SENSORS
+  // ******************************
+
   #ifdef DHT11_Sensor
   this->addSensor(new DHT11Sensor(DHT11_PIN));
   #endif
@@ -30,6 +40,24 @@ Follower::Follower() {
   #ifdef CCS811_Sensor
   this->addSensor(new CCS811());
   #endif
+
+  #ifdef Photoresistor_Sensor
+  this->addSensor(new Photoresistor());
+  #endif
+
+  #ifdef BH1750_Sensor
+  this->addSensor(new BH1750Sensor());
+  #endif
+
+  #ifdef ResistiveSoil_Sensor
+  this->addSensor(new ResistiveSoil());
+  #endif
+
+  // ******************************
+  // END SENSORS
+  // ******************************
+
+
 
   this->http.begin(wifi_client, "http://10.1.0.1/data");
 }
@@ -63,6 +91,9 @@ void Follower::loop() {
         sensor["type"] = ms->getType(i);
         char* val = ms->getValue(i);
         sensor["value"] = val;
+        Serial.print(ms->getType(i));
+        Serial.print("=");
+        Serial.println(val);
         if (strncmp(val, "error", 32) == 0) {
           error_encountered = true;
         }
@@ -72,6 +103,9 @@ void Follower::loop() {
       sensor["type"] = s->getType();
       const char* val = s->getValue();
       sensor["value"] = val;
+      Serial.print(s->getType());
+      Serial.print("=");
+      Serial.println(val);
       if (strncmp(val, "error", 32) == 0) {
         error_encountered = true;
       }

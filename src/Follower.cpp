@@ -13,6 +13,7 @@
 #include "sensors/Photoresistor.h"
 #include "sensors/BH1750.h"
 #include "sensors/ResistiveSoil.h"
+#include "sensors/AHT10.h"
 
 Follower::Follower() {
   WiFi.mode(WIFI_STA);
@@ -35,6 +36,10 @@ Follower::Follower() {
 
   #ifdef DHT11_Sensor
   this->addSensor(new DHT11Sensor(DHT11_PIN));
+  #endif
+
+  #ifdef AHT10_Sensor
+  this->addSensor(new AHT10Sensor());
   #endif
 
   #ifdef CCS811_Sensor

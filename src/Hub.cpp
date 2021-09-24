@@ -28,7 +28,8 @@ Hub::Hub() : http_server(80) {
     Serial.print(".");
     delay(500);
   }
-  Serial.println("\nConnected!");
+  Serial.print("\nConnected! IP: ");
+  Serial.println(WiFi.localIP());
 
   Wire.begin();
 

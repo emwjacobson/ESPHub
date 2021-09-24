@@ -44,7 +44,7 @@ public:
       this->aht.getTemperatureSensor()->getEvent(&temperature);
 
       #if AHT10_READ_FAHRENHEIT
-      temperature.temperature = (temperature.temperature * (9/5)) + 32;
+      temperature.temperature = (temperature.temperature * ((float)9/5)) + 32;
       #endif
 
       snprintf(this->value, 32, "%.2f", temperature.temperature);

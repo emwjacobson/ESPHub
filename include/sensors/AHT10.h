@@ -47,6 +47,8 @@ public:
       temperature.temperature = (temperature.temperature * ((float)9/5)) + 32;
       #endif
 
+      temperature.temperature += AHT10_TEMP_OFFSET;
+
       snprintf(this->value, 32, "%.2f", temperature.temperature);
       // float temp = this->dht.readTemperature(DHT11_READ_FAHRENHEIT);
       // int tries = 10;

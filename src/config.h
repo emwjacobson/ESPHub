@@ -50,6 +50,7 @@
 
 #define AHT10_Sensor // Temperature and Humidity sensor
   #define AHT10_READ_FAHRENHEIT true
+  #define AHT10_TEMP_OFFSET -10 // An offset is nice when the device might heat itself up (ESPHub v0.1-v0.4)
 
 // #define CCS811_Sensor // CO2 sensor. *NEEDS WARMUP PERIOD*
 

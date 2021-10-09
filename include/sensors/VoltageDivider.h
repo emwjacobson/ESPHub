@@ -4,6 +4,18 @@
 #include "Sensor.h"
 #include "config.h"
 
+#ifndef VDIV_ANALOG_OFFSET
+#define VDIV_ANALOG_OFFSET 0
+#endif
+
+#ifndef VDIV_R1
+#define VDIV_R1 0
+#endif
+
+#ifndef VDIV_R2
+#define VDIV_R2 0
+#endif
+
 class VoltageDivider : public Sensor {
 public:
   VoltageDivider() : Sensor("VoltageDivider") {}

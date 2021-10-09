@@ -14,6 +14,7 @@
 #include "sensors/BH1750.h"
 #include "sensors/ResistiveSoil.h"
 #include "sensors/AHT10.h"
+#include "sensors/VoltageDivider.h"
 
 Follower::Follower() {
   WiFi.mode(WIFI_STA);
@@ -56,6 +57,10 @@ Follower::Follower() {
 
   #ifdef ResistiveSoil_Sensor
   this->addSensor(new ResistiveSoil());
+  #endif
+
+  #ifdef Voltage_Divider
+  this->addSensor(new VoltageDivider());
   #endif
 
   // ******************************

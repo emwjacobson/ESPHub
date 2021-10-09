@@ -41,8 +41,16 @@
   #define ACTIVE_DELAY_INTERNET_DISCONNECT
 // #define MODE_ACTIVE
 
-// Uncomment all of the sensors that you would like to enable on this follower node
 
+
+//////////////////////////////////////
+//////// Sensor Configuration ////////
+//////////////////////////////////////
+
+
+//
+// Temperature & Humidity Sensors
+//
 
 // #define DHT11_Sensor // Temperature and Humidity sensor
 //   #define DHT11_PIN D7
@@ -50,14 +58,31 @@
 
 #define AHT10_Sensor // Temperature and Humidity sensor
   #define AHT10_READ_FAHRENHEIT true
-  #define AHT10_TEMP_OFFSET -10 // An offset is nice when the device might heat itself up (ESPHub v0.1-v0.4)
+  #define AHT10_TEMP_OFFSET 0 // An offset is nice when the device might heat itself up (ESPHub v0.1-v0.4)
+
+//
+// CO2 Sensors
+//
 
 // #define CCS811_Sensor // CO2 sensor. *NEEDS WARMUP PERIOD*
 
-// #define Photoresistor_Sensor // Uses the ESP8266's only A0 analog pin!
+//
+// Light Sensors
+//
+
+#define BH1750_Sensor
+
+//
+// Resistive Sensors
+//
 
 // #define ResistiveSoil_Sensor // Uses the ESP8266's only A0 analog pin!
 
-#define BH1750_Sensor
+// #define Photoresistor_Sensor // Uses the ESP8266's only A0 analog pin!
+
+// #define Voltage_Divider // Uses the ESP8266's only A0 analog pin!
+//   #define VDIV_R1 9920
+//   #define VDIV_R2 810
+//   #define VDIV_ANALOG_OFFSET -8
 
 #endif

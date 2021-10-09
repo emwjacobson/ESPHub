@@ -13,6 +13,7 @@
 #include "sensors/BH1750.h"
 #include "sensors/ResistiveSoil.h"
 #include "sensors/AHT10.h"
+#include "sensors/VoltageDivider.h"
 
 Hub::Hub() : http_server(80) {
   WiFi.mode(WIFI_AP_STA);
@@ -61,6 +62,10 @@ Hub::Hub() : http_server(80) {
 
   #ifdef ResistiveSoil_Sensor
   this->addSensor(new ResistiveSoil());
+  #endif
+
+  #ifdef Voltage_Divider
+  this->addSensor(new VoltageDivider());
   #endif
 
   // ******************************

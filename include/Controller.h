@@ -12,6 +12,7 @@ protected:
 
   void connectToAP(const char* SSID, const char* passwd);
   bool setupSoftAP(const char* SSID, const char* passwd);
+  void registerSensors();
   void addSensor(Sensor* sensor);
 };
 

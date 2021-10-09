@@ -13,7 +13,7 @@
 #endif
 
 #ifndef VDIV_R2
-#define VDIV_R2 0
+#define VDIV_R2 1
 #endif
 
 class VoltageDivider : public Sensor {

@@ -54,7 +54,7 @@ Hub::Hub() : http_server(80) {
     }
 
     // Devices reporting over 8 sensors will start to run into problems
-    const int doc_size = JSON_OBJECT_SIZE(2) + JSON_ARRAY_SIZE(8) + JSON_OBJECT_SIZE(8);
+    const int doc_size = JSON_OBJECT_SIZE(2) + JSON_ARRAY_SIZE(8) + JSON_OBJECT_SIZE(8) + 256;
     DynamicJsonDocument doc(doc_size);
 
     DeserializationError err = deserializeJson(doc, this->http_server.arg("plain"));

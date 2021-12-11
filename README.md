@@ -64,7 +64,7 @@ The modes are described as follows:
   - This has an additional option, `ACTIVE_DELAY_INTERNET_DISCONNECT`. When this is enabled, it will disconnect from WiFi after reporting. Despite intuition, an ESP8266 will consume **more** power when **disconnected** from WiFi.
 - `MODE_ACTIVE`: This one continuously reports data, will only pause for 1 second before data readings.
 
-**NOTE**: The Hub's SoftAP is limited to only 8 clients connected at a time. The ACTIVE and ACTIVE_DELAY modes **DO NOT** disconnect from the AP after reporting data (unless the `ACTIVE_DELAY_INTERNET_DISCONNECT` option is uncommented for ACTIVE_DELAY). This means that you will be limited to 8 Active Follower nodes connected at a time. When using the DEEP_SLEEP mode (or when `ACTIVE_DELAY_INTERNET_DISCONNECT` is uncommented), the node will fully disconnect from the AP. This should allow for many more nodes to be added as they should not all be connected at the same time.
+**NOTE**: The Hub's SoftAP is limited to only 8 clients connected at a time. The ACTIVE and ACTIVE_DELAY modes **DO NOT** disconnect from the AP after reporting data (unless the `ACTIVE_DELAY_INTERNET_DISCONNECT` option is uncommented for `ACTIVE_DELAY`). This means that you will be limited to 8 Active Follower nodes connected at a time. When using the DEEP_SLEEP mode (or when `ACTIVE_DELAY_INTERNET_DISCONNECT` is uncommented), the node will fully disconnect from the AP. This should allow for many more nodes to be added as they should not all be connected at the same time.
 
 To enable a sensor for a Follower node, uncomment the line and any other options.
 

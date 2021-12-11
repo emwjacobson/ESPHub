@@ -40,8 +40,6 @@ void Follower::loop() {
     Serial.println();
   }
 
-
-
   DynamicJsonDocument doc(9001); // TODO: Calculate number later
 
   doc["name"] = NODE_NAME;

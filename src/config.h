@@ -1,7 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "ESP8266WiFi.h"
+#define PRINT(msg) Serial.print(msg)
+#define PRINTLN(msg) Serial.println(msg)
 
 ///////////////////////////////////////
 //////// General Configuration ////////
@@ -9,38 +10,16 @@
 
 // NODE_NAME is who the node will report it's data as, should be
 // unique between devices if you want seperate entities.
-#define NODE_NAME "Bedroom"
+#define NODE_NAME "LivingRoom"
 
 // HUB_SSID is the SSID that the Hub node broadcasts and the Follower nodes connect to.
-#define HUB_SSID "ESPHub"
-#define HUB_PASSWD "ChangeMe!"
+#define WIFI_SSID "Ebic 2G"
+#define WIFI_PASSWD "DumbAssPassword123"
 
-
-
-////////////////////////////////////////
-//////// Hub Node Configuration ////////
-////////////////////////////////////////
-
-// EXTERNAL_SSID is the SSID that the Hub node will connect to to relay data from the follower nodes.
-#define EXTERNAL_SSID ""
-#define EXTERNAL_PASSWD ""
-
-// Set HUB_SSID_HIDDEN to 0 to hide SSID from showing up.
-#define HUB_SSID_HIDDEN 0
-
-
-
-/////////////////////////////////////////////
-//////// Follower Node Configuration ////////
-/////////////////////////////////////////////
-
-// Only one mode should be uncommented. If multiple are uncommented then the first one will be
-// active one. The Readme provides more details about each mode.
-// #define MODE_DEEP_SLEEP
-#define MODE_ACTIVE_DELAY
-  #define ACTIVE_DELAY_INTERNET_DISCONNECT
-// #define MODE_ACTIVE
-
+#define MQTT_HOST "192.168.8.50"
+#define MQTT_PORT 1883
+#define MQTT_USERNAME "esp8266"
+#define MQTT_PASSWD "esp8266_password"
 
 
 //////////////////////////////////////
@@ -48,38 +27,50 @@
 //////////////////////////////////////
 
 
-//
-// Temperature & Humidity Sensors
-//
 
+//////////////////////////////////////////
+//    Temperature & Humidity Sensors    //
+//////////////////////////////////////////
+
+// THE DHT11 HAS NOT BEEN IMPLEMENTED IN MQTT REWRITE
 // #define DHT11_Sensor // Temperature and Humidity sensor
 //   #define DHT11_PIN D7
 //   #define DHT11_READ_FAHRENHEIT true
 
 #define AHT10_Sensor // Temperature and Humidity sensor
   #define AHT10_READ_FAHRENHEIT true
-  #define AHT10_TEMP_OFFSET 0 // An offset is nice when the device might heat itself up (ESPHub v0.1-v0.4)
+//   #define AHT10_TEMP_OFFSET 0 // An offset is nice when the device might heat itself up (ESPHub v0.1-v0.4)
 
-//
-// CO2 Sensors
-//
 
+
+///////////////////////
+//    CO2 Sensors    //
+///////////////////////
+
+// THE CCS811 HAS NOT BEEN IMPLEMENTED IN MQTT REWRITE
 // #define CCS811_Sensor // CO2 sensor. *NEEDS WARMUP PERIOD*
 
-//
-// Light Sensors
-//
+
+
+/////////////////////////
+//    Light Sensors    //
+/////////////////////////
 
 #define BH1750_Sensor
 
-//
-// Resistive Sensors
-//
 
+
+/////////////////////////////
+//    Resistive Sensors    //
+/////////////////////////////
+
+// THE RESISTIVESOIL HAS NOT BEEN IMPLEMENTED IN MQTT REWRITE
 // #define ResistiveSoil_Sensor // Uses the ESP8266's only A0 analog pin!
 
+// THE PHOTORESISTIVE HAS NOT BEEN IMPLEMENTED IN MQTT REWRITE
 // #define Photoresistor_Sensor // Uses the ESP8266's only A0 analog pin!
 
+// THE VOLTAGEDIVIDER HAS NOT BEEN IMPLEMENTED IN MQTT REWRITE
 // #define Voltage_Divider // Uses the ESP8266's only A0 analog pin!
 //   #define VDIV_R1 9920
 //   #define VDIV_R2 810

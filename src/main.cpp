@@ -33,7 +33,13 @@ void setup() {
   devices.push_back(new BH1750Device());
   #endif
 
-  mqtt.connect(NODE_NAME, MQTT_USERNAME, MQTT_PASSWD);
+  PRINTLN("Connecting to MQTT Broker...");
+  bool status = mqtt.connect(NODE_NAME, MQTT_USERNAME, MQTT_PASSWD);
+  if (!status) {
+    PRINTLN("Could not connect to broker...");
+    ESP.reset();
+  }
+  PRINTLN("Connected!");
 
   for (Device* device : devices) {
     std::vector<sensor_data> data = device->getDeviceData();
@@ -42,6 +48,9 @@ void setup() {
     }
   }
 
+  mqtt.disconnect();
+
+  PRINTLN("Sleeping...");
   ESP.deepSleep(SLEEP_TIME, WAKE_RF_DEFAULT);
 }
 

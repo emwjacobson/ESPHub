@@ -10,16 +10,19 @@
 
 // NODE_NAME is who the node will report it's data as, should be
 // unique between devices if you want seperate entities.
-#define NODE_NAME "LivingRoom"
+#define NODE_NAME "NodeName"
 
 // HUB_SSID is the SSID that the Hub node broadcasts and the Follower nodes connect to.
-#define WIFI_SSID "Ebic 2G"
-#define WIFI_PASSWD "DumbAssPassword123"
+#define WIFI_SSID "YourWifi"
+#define WIFI_PASSWD "YourWifiPassword"
 
-#define MQTT_HOST "192.168.8.50"
+#define MQTT_HOST "your.mqtt.broker"
 #define MQTT_PORT 1883
-#define MQTT_USERNAME "esp8266"
-#define MQTT_PASSWD "esp8266_password"
+#define MQTT_USERNAME "broker_username"
+#define MQTT_PASSWD "broker_password"
+
+// Sleep time is in microseconds. 60 seconds = 60e6 microseconds
+#define SLEEP_TIME 30e6
 
 
 //////////////////////////////////////

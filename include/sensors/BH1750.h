@@ -28,7 +28,7 @@ public:
 
     light_level = this->lightMeter.readLightLevel();
 
-    data.push_back(sensor_data { "Brightness", light_level });
+    data.push_back(sensor_data { "brightness", light_level });
 
     return data;
   }

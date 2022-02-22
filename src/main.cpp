@@ -12,7 +12,7 @@ PubSubClient mqtt(MQTT_HOST, MQTT_PORT, wifiClient);
 std::vector<Device*> devices;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(74880);
   Serial.println("Serial Initialized");
 
   // Connect to wifi
@@ -34,9 +34,7 @@ void setup() {
   #endif
 
   mqtt.connect(NODE_NAME, MQTT_USERNAME, MQTT_PASSWD);
-}
 
-void loop() {
   for (Device* device : devices) {
     std::vector<sensor_data> data = device->getDeviceData();
     for (sensor_data s_data : data) {
@@ -44,5 +42,7 @@ void loop() {
     }
   }
 
-  delay(5000);
+  ESP.deepSleep(SLEEP_TIME, WAKE_RF_DEFAULT);
 }
+
+void loop() {}
